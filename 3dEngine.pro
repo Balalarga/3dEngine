@@ -4,6 +4,13 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 
+
+win32{
+    LIBS += -lmingw32
+    LIBS += -L"..\libs"
+    INCLUDEPATH += "../include"
+}
+
 LIBS += -lSDL2main -lSDL2 -lSDL2_image
 
 SOURCES += \

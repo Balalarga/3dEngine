@@ -12,7 +12,7 @@ public:
 
     void run();
 private:
-    Window* m_mainWindow;
+    Window* m_screen;
 };
 
 #endif // GAME_H

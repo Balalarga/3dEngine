@@ -3,7 +3,7 @@
 using std::cout;
 
 Game::Game():
-    m_mainWindow(new Window("Game"))
+    m_screen(new Window("Game"))
 {
 }
 
@@ -22,6 +22,6 @@ void Game::run(){
 
 Game::~Game()
 {
-    delete m_mainWindow;
+    delete m_screen;
     SDL_Quit();
 }
