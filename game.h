@@ -3,14 +3,15 @@
 
 #include <window.h>
 
-class Game
-{
+class Game{
 public:
     Game();
-    bool init();
     ~Game();
 
-    void run();
+    bool init();
+    void start();
+
+    void checkEvents();
 private:
     Window* m_screen;
 };

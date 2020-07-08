@@ -2,9 +2,7 @@
 #include <iostream>
 using std::cout;
 
-Game::Game():
-    m_screen(new Window("Game"))
-{
+Game::Game(){
 }
 
 bool Game::init(){
@@ -13,15 +11,28 @@ bool Game::init(){
         cout<<std::endl;
         return false;
     }
+    m_screen = new Window("Game");
     return true;
 }
 
-void Game::run(){
+void Game::start(){
+    while(m_screen->isOpen()){
+        m_screen->clear();
+        checkEvents();
 
+        m_screen->swap();
+    }
 }
 
-Game::~Game()
-{
+void Game::checkEvents(){
+    SDL_Event e;
+    while(SDL_PollEvent(&e)){
+        if(e.type == SDL_QUIT)
+            m_screen->close();
+    }
+}
+
+Game::~Game(){
     delete m_screen;
     SDL_Quit();
 }
