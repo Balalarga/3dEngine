@@ -1,7 +1,7 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
-#include "utils.h"
+#include "glLibs.h"
 
 #include <string>
 #include <memory>

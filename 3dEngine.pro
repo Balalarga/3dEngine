@@ -5,13 +5,13 @@ CONFIG -= qt
 
 win32{
     LIBS += -lmingw32
+    LIBS += -lopengl32
     LIBS += -L"..\libs"
     INCLUDEPATH += "..\include"
 }
 unix{
-    LIBS += -lGL -lGLU
+    LIBS += -lGL
 }
-
 LIBS += -lSDL2main -lSDL2 -lSDL2_image
 
 SOURCES += \

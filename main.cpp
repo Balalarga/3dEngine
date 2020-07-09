@@ -10,6 +10,6 @@ int main(int argc, char** argv){
     g.init();
     g.start();
 
-
+    cout<<"End\n";
     return 0;
 }
