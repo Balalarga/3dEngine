@@ -17,11 +17,13 @@ LIBS += -lSDL2main -lSDL2 -lSDL2_image
 SOURCES += \
         game.cpp \
         main.cpp \
+        mesh.cpp \
         shaderprogram.cpp \
         window.cpp
 
 HEADERS += \
     game.h \
     glLibs.h \
+    mesh.h \
     shaderprogram.h \
     window.h

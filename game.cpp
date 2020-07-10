@@ -12,16 +12,27 @@ bool Game::init(){
         return false;
     }
     m_screen = new Window("Game");
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CCW);
+    glCullFace(GL_BACK);
     return true;
 }
 
 void Game::start(){
+
     while(m_screen->isOpen()){
         m_screen->clear();
         checkEvents();
+        draw();
+
 
         m_screen->swap();
     }
+}
+
+void Game::draw(){
+
 }
 
 void Game::checkEvents(){
