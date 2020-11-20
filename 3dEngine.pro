@@ -12,18 +12,14 @@ win32{
 unix{
     LIBS += -lGL
 }
-LIBS += -lSDL2main -lSDL2 -lSDL2_image
+LIBS += -lSDL2main -lSDL2 -lSDL2_image -lGLEW -lGLU
 
 SOURCES += \
+        cubemesh.cpp \
         game.cpp \
-        main.cpp \
-        mesh.cpp \
-        shaderprogram.cpp \
-        window.cpp
+        main.cpp
 
 HEADERS += \
+    cubemesh.h \
     game.h \
-    glLibs.h \
-    mesh.h \
-    shaderprogram.h \
-    window.h
+    mesh.h

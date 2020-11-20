@@ -1,17 +1,11 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "glLibs.h"
-
-
-class Mesh
-{
+class Mesh{
 public:
-    Mesh();
-
-
-private:
-    GLuint m_vao;
+    virtual ~Mesh(){};
+    virtual void draw() = 0;
+    virtual void update(){};
 };
 
 #endif // MESH_H
