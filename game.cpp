@@ -1,116 +1,139 @@
 #include "game.h"
+#include "objectmanager.h"
 #include <iostream>
 using namespace std;
 
 Game* Game::selfInstance = nullptr;
 
-Game &Game::instance()
+Game::Game()
+{
+
+}
+
+Game &Game::Instance()
 {
     if(!selfInstance)
         selfInstance = new Game();
     return *selfInstance;
 }
 
-void Game::init()
+void Game::Init()
 {
-
-    // Инициализация SDL
 
     if ( SDL_Init(SDL_INIT_VIDEO) < 0 ){
         cout << "Unable to init SDL, error: " << SDL_GetError() << endl;
         exit(1);
     }
 
-    // Включаем двойной буфер, настраиваем цвета
-
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 
-    // Создаем окно с заголовком "Cube", размером 640х480 и расположенным по центру экрана.
+    window = SDL_CreateWindow("Cube", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                              width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
-    window = SDL_CreateWindow("Cube", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-
-    glcontext = SDL_GL_CreateContext(window); // создаем контекст OpenGL
-
-    if(window == NULL){	// если не получилось создать окно, то выходим
+    if(window == NULL){
         exit(1);
     }
 
-    // Инициализация OpenGL
+    glcontext = SDL_GL_CreateContext(window);
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // устанавливаем фоновый цвет на черный
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClearDepth(1.0);
     glDepthFunc(GL_LESS);
-    glEnable(GL_DEPTH_TEST); // включаем тест глубины
+    glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(45.0f, (float) width / (float) height, 0.1f, 100.0f); // настраиваем трехмерную перспективу
-    glMatrixMode(GL_MODELVIEW); // переходим в трехмерный режим
+    gluPerspective(45.0f, (float) width / (float) height, 0.1f, 100.0f);
+    glMatrixMode(GL_MODELVIEW);
 
-    for(int i = 0; i < 1; i++){
-        glm::vec3 pos;
-        pos.x = 1*i;
-        pos.y = 7;
-        pos.x = 7;
-        CubeMesh cube(1, pos);
-        cubes.push_back(cube);
+    for(int i = 0; i < 100; i++){
+        glm::vec3 pos{i, i, -10};
+        ObjectManager::Instance().Add("cube1", new CubeMesh(1, pos));
     }
+    camera = dynamic_cast<Camera*>(ObjectManager::Instance().Add("camera", new Camera));
 }
 
-bool Game::isRunning()
+bool Game::IsRunning()
 {
     return running;
 }
 
-void Game::handleEvents()
+void Game::HandleEvents()
 {
-    SDL_Event event; // события SDL
+    SDL_Event event;
 
-    while ( SDL_PollEvent(&event) ){ // начинаем обработку событий
-        switch(event.type){ // смотрим:
-            case SDL_QUIT: // если произошло событие закрытия окна, то завершаем работу программы
-                running = false;
+    while ( SDL_PollEvent(&event) ){
+        switch(event.type){
+        case SDL_QUIT:
+            running = false;
             break;
 
-            case SDL_KEYDOWN: // если нажата клавиша
-                switch(event.key.keysym.sym){ // смотрим какая
-                    case SDLK_ESCAPE: // клавиша ESC
-                        running = false; // завершаем работу программы
-                    break;
-                }
+        case SDL_KEYDOWN:
+            switch(event.key.keysym.sym){
+            case SDLK_ESCAPE:
+                running = false;
+                break;
+            case SDLK_LEFT:
+                camera->transform.Move({0, -1, 0});
+                break;
+            case SDLK_RIGHT:
+                camera->transform.Move({0, 1, 0});
+                break;
+            case SDLK_UP:
+                camera->transform.Move({1, 0, 0});
+                break;
+            case SDLK_DOWN:
+                camera->transform.Move({-1, 0, 0});
+                break;
+            }
             break;
         }
     }
 }
 
-void Game::draw()
+void Game::Tick()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    float frameTime = 1000.f/fpsData.fps;
+    float frameStart = SDL_GetTicks();
 
-    for(auto& i : cubes){
-        glPushMatrix();
-        i.draw();
-        glPopMatrix();
+    Game::Instance().HandleEvents();
+    Game::Instance().Update();
+    Game::Instance().Draw();
+
+    fpsData.timeElapsed = SDL_GetTicks() - frameStart;
+    if(frameTime > fpsData.timeElapsed){
+        SDL_Delay(frameTime - fpsData.timeElapsed);
     }
 }
 
-void Game::swapBuffer()
+void Game::Draw()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glTranslatef(camera->transform.position.x,
+                 camera->transform.position.y,
+                 camera->transform.position.z);
+    ObjectManager::Instance().Draw();
+    SwapBuffer();
+}
+
+void Game::Update(){
+
+}
+
+void Game::SwapBuffer()
 {
     glFlush();
     SDL_GL_SwapWindow(window);
 }
 
-Game::~Game()
+void Game::Destroy()
 {
+    ObjectManager::Instance().Clear();
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
-    SDL_Quit(); // завершаем работу SDL и выходим
+    SDL_Quit();
 }
 
-Game::Game()
-{
-
-}

@@ -1,37 +1,38 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <SDL2/SDL.h> // Библиотека SDL 2
-
-#include <GL/gl.h> // Библиотека OpenGL
-#include <GL/glu.h> // Библиотека GLU
+#include "glIncludes.h"
 
 #include "cubemesh.h"
+#include "camera.h"
 #include <vector>
-using std::vector;
 
 class Game
 {
 public:
-    static Game& instance();
-    void init();
-    bool isRunning();
-    void handleEvents();
-    void draw();
-    void swapBuffer();
-    ~Game();
+    static Game& Instance();
+    void Init();
+    bool IsRunning();
+    void HandleEvents();
+    void Tick();
+    void Draw();
+    void Update();
+    void SwapBuffer();
+    void Destroy();
 
 private:
     Game();
     static Game* selfInstance;
-    SDL_Window *window; // задаем окно для SDL
+    SDL_Window *window;
     SDL_GLContext glcontext;
-    int width = 640; // ширина окна
-    int height = 480; // высота окна
+    int width = 640;
+    int height = 480;
     bool running = true;
-    float xrf = 0, yrf = 0, zrf = 0; // углы поворота
-
-    vector<CubeMesh> cubes;
+    struct FpsData{
+        float fps = 60.f;
+        float timeElapsed = 0.f;
+    } fpsData;
+    Camera* camera;
 
 };
 

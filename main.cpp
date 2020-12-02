@@ -4,18 +4,14 @@ using namespace std;
 
 int main(int argc, char *argv[]){
 
-    Game::instance().init();
+    Game::Instance().Init();
 
 
-    while(Game::instance().isRunning()){
-
-        Game::instance().handleEvents();
-
-        Game::instance().draw();
-
-        Game::instance().swapBuffer();
-
+    while(Game::Instance().IsRunning()){
+        Game::Instance().Tick();
     }
 
+
+    Game::Instance().Destroy();
     return 0;
 }

@@ -2,16 +2,16 @@
 #define CUBEMESH_H
 
 #include "mesh.h"
-#include <glm/vec3.hpp>
+#include "glIncludes.h"
 
 class CubeMesh: public Mesh
 {
 public:
     CubeMesh(int size, glm::vec3 pos = {0, 0, 0});
-    void draw() override;
+    void Draw() override;
 
 private:
-    glm::vec3 pos = {0, 0, 7};
+    glm::vec3 pos;
     int size = 1;
 };
 

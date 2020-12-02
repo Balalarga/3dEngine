@@ -1,6 +1,4 @@
 #include "cubemesh.h"
-#include <GL/glew.h>
-#include <GL/gl.h>
 
 CubeMesh::CubeMesh(int size, glm::vec3 pos):
     pos(pos),
@@ -8,9 +6,9 @@ CubeMesh::CubeMesh(int size, glm::vec3 pos):
 {
 }
 
-void CubeMesh::draw()
+void CubeMesh::Draw()
 {
-    glTranslatef(pos.x, pos.y, pos.y);	// Сдвинуть вглубь экрана
+    glTranslatef(pos.x, pos.y, pos.z);	// Сдвинуть вглубь экрана
 
     //    glRotatef(xrf, 1.0f, 0.0f, 0.0f);	// Вращение куба по X, Y, Z
     //    glRotatef(yrf, 0.0f, 1.0f, 0.0f);	// Вращение куба по X, Y, Z
