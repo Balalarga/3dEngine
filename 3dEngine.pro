@@ -20,3 +20,5 @@ SOURCES += \
 
 HEADERS += \
         $${files(src/*.h, true)}
+
+INCLUDEPATH += src/

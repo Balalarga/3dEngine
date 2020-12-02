@@ -2,7 +2,7 @@
 #define CUBEMESH_H
 
 #include "mesh.h"
-#include "../glIncludes.h"
+#include "glIncludes.h"
 
 class CubeMesh: public Mesh
 {
