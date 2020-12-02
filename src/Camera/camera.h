@@ -1,13 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "mesh.h"
 
-class Camera: public Mesh
+class Camera
 {
 public:
     Camera();
-    void Draw() override;
 
 
 };

@@ -15,18 +15,8 @@ unix{
 LIBS += -lSDL2main -lSDL2 -lSDL2_image
 
 SOURCES += \
-        camera.cpp \
-        cubemesh.cpp \
-        game.cpp \
         main.cpp \
-        objectmanager.cpp
+        $${files(src/*.cpp, true)}
 
 HEADERS += \
-    camera.h \
-    cubemesh.h \
-    game.h \
-    mesh.h \
-    glIncludes.h \
-    objectmanager.h \
-    physics.h \
-    transform.h
+        $${files(src/*.h, true)}

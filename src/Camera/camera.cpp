@@ -4,8 +4,3 @@ Camera::Camera()
 {
 
 }
-
-void Camera::Draw()
-{
-
-}

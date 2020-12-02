@@ -2,7 +2,6 @@
 #define MESH_H
 
 #include "transform.h"
-#include "physics.h"
 
 struct Color{
     float r, g, b;
@@ -16,7 +15,7 @@ public:
 
     Color color{1.f, 1.f, 1.f};
     Transform transform;
-    Physics physics;
+
 };
 
 #endif // MESH_H

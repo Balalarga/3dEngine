@@ -1,5 +1,5 @@
 #include "objectmanager.h"
-#include "glIncludes.h"
+#include "../glIncludes.h"
 
 ObjectManager* ObjectManager::selfInstance = nullptr;
 

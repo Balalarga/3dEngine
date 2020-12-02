@@ -1,5 +1,5 @@
 #include "game.h"
-#include "objectmanager.h"
+#include "Objects/objectmanager.h"
 #include <iostream>
 using namespace std;
 
@@ -53,7 +53,7 @@ void Game::Init()
         glm::vec3 pos{i, i, -10};
         ObjectManager::Instance().Add("cube1", new CubeMesh(1, pos));
     }
-    camera = dynamic_cast<Camera*>(ObjectManager::Instance().Add("camera", new Camera));
+//    camera = dynamic_cast<Camera*>(ObjectManager::Instance().Add("camera", new Camera));
 }
 
 bool Game::IsRunning()
@@ -77,16 +77,16 @@ void Game::HandleEvents()
                 running = false;
                 break;
             case SDLK_LEFT:
-                camera->transform.Move({0, -1, 0});
+//                camera->transform.Move({0, -1, 0});
                 break;
             case SDLK_RIGHT:
-                camera->transform.Move({0, 1, 0});
+//                camera->transform.Move({0, 1, 0});
                 break;
             case SDLK_UP:
-                camera->transform.Move({1, 0, 0});
+//                camera->transform.Move({1, 0, 0});
                 break;
             case SDLK_DOWN:
-                camera->transform.Move({-1, 0, 0});
+//                camera->transform.Move({-1, 0, 0});
                 break;
             }
             break;
@@ -112,9 +112,9 @@ void Game::Tick()
 void Game::Draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glTranslatef(camera->transform.position.x,
-                 camera->transform.position.y,
-                 camera->transform.position.z);
+//    glTranslatef(camera->transform.position.x,
+//                 camera->transform.position.y,
+//                 camera->transform.position.z);
     ObjectManager::Instance().Draw();
     SwapBuffer();
 }

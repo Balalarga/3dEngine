@@ -3,8 +3,8 @@
 
 #include "glIncludes.h"
 
-#include "cubemesh.h"
-#include "camera.h"
+#include "Objects/cubemesh.h"
+#include "Camera/camera.h"
 #include <vector>
 
 class Game
