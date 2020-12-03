@@ -10,9 +10,7 @@ public:
     glm::vec3 rotation{0, 0, 0};
     glm::vec3 scale   {1, 1, 1};
     void Move(glm::vec3 dPosition){
-        position.x += dPosition.x;
-        position.y += dPosition.y;
-        position.z += dPosition.z;
+        position += dPosition;
     }
     void Rotate(glm::vec3 dAngle){
         position.x += dAngle.x;

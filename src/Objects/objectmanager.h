@@ -1,7 +1,7 @@
 #ifndef OBJECTMANAGER_H
 #define OBJECTMANAGER_H
 
-#include "mesh.h"
+#include "gameobject.h"
 #include <string>
 #include <unordered_map>
 
@@ -10,9 +10,9 @@ class ObjectManager
 public:
     static ObjectManager& Instance();
     void Clear();
-    Mesh* Add(std::string name, Mesh*&& object);
+    GameObject* Add(std::string name, GameObject*&& object);
     void Remove(std::string name);
-    Mesh* Get(std::string name);
+    GameObject* Get(std::string name);
     void Draw();
     void Update(double dt);
 
@@ -20,7 +20,7 @@ public:
 private:
     static ObjectManager* selfInstance;
     ObjectManager();
-    std::unordered_map<std::string, Mesh*> objects;
+    std::unordered_map<std::string, GameObject*> objects;
 };
 
 #endif // OBJECTMANAGER_H

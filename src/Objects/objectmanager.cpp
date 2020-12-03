@@ -16,7 +16,7 @@ void ObjectManager::Clear()
     }
 }
 
-Mesh *ObjectManager::Add(std::string name, Mesh *&&object)
+GameObject *ObjectManager::Add(std::string name, GameObject *&&object)
 {
     auto pos = objects.find(name);
     if(pos == objects.end()){
@@ -36,7 +36,7 @@ void ObjectManager::Remove(std::string name)
     }
 }
 
-Mesh *ObjectManager::Get(std::string name)
+GameObject *ObjectManager::Get(std::string name)
 {
     auto pos = objects.find(name);
     if(pos != objects.end())
@@ -56,7 +56,7 @@ void ObjectManager::Draw()
 void ObjectManager::Update(double dt)
 {
     for(auto i: objects){
-        i.second->Update();
+        i.second->Update(dt);
     }
 }
 

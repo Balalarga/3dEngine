@@ -1,12 +1,13 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include "glIncludes.h"
+#include "Objects/gameobject.h"
 
-class Camera
+class Camera: public GameObject
 {
 public:
     Camera();
-
 
 };
 

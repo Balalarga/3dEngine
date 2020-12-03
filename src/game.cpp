@@ -53,7 +53,7 @@ void Game::Init()
         glm::vec3 pos{i, i, -10};
         ObjectManager::Instance().Add("cube1", new CubeMesh(1, pos));
     }
-//    camera = dynamic_cast<Camera*>(ObjectManager::Instance().Add("camera", new Camera));
+    camera = dynamic_cast<Camera*>(ObjectManager::Instance().Add("camera", new Camera));
 }
 
 bool Game::IsRunning()
@@ -64,31 +64,35 @@ bool Game::IsRunning()
 void Game::HandleEvents()
 {
     SDL_Event event;
-
     while ( SDL_PollEvent(&event) ){
         switch(event.type){
         case SDL_QUIT:
             running = false;
             break;
-
         case SDL_KEYDOWN:
-            switch(event.key.keysym.sym){
-            case SDLK_ESCAPE:
+            switch(event.key.keysym.scancode){
+            case SDL_SCANCODE_ESCAPE:
                 running = false;
                 break;
-            case SDLK_LEFT:
-//                camera->transform.Move({0, -1, 0});
+            case SDL_SCANCODE_LEFT:
+                cout<<"Moving left\n";
+                camera->transform.Move({-0.1, 0, 0});
                 break;
-            case SDLK_RIGHT:
-//                camera->transform.Move({0, 1, 0});
+            case SDL_SCANCODE_RIGHT:
+                cout<<"Moving right\n";
+                camera->transform.Move({0.1, 0, 0});
                 break;
-            case SDLK_UP:
-//                camera->transform.Move({1, 0, 0});
+            case SDL_SCANCODE_UP:
+                cout<<"Moving up\n";
+                camera->transform.Move({0, 0.1, 0});
                 break;
-            case SDLK_DOWN:
-//                camera->transform.Move({-1, 0, 0});
+            case SDL_SCANCODE_DOWN:
+                cout<<"Moving down\n";
+                camera->transform.Move({0, -0.1, 0});
                 break;
             }
+            break;
+        case SDL_KEYUP:
             break;
         }
     }
@@ -112,15 +116,16 @@ void Game::Tick()
 void Game::Draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glTranslatef(camera->transform.position.x,
-//                 camera->transform.position.y,
-//                 camera->transform.position.z);
+    glLoadIdentity();
+    glTranslatef(camera->transform.position.x,
+                 camera->transform.position.y,
+                 camera->transform.position.z);
     ObjectManager::Instance().Draw();
     SwapBuffer();
 }
 
 void Game::Update(){
-
+    ObjectManager::Instance().Update(fpsData.timeElapsed);
 }
 
 void Game::SwapBuffer()

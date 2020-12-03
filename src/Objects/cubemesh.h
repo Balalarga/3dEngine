@@ -1,10 +1,10 @@
 #ifndef CUBEMESH_H
 #define CUBEMESH_H
 
-#include "mesh.h"
+#include "gameobject.h"
 #include "glIncludes.h"
 
-class CubeMesh: public Mesh
+class CubeMesh: public GameObject
 {
 public:
     CubeMesh(int size, glm::vec3 pos = {0, 0, 0});
