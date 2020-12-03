@@ -1,5 +1,5 @@
 #include "game.h"
-#include "Objects/objectmanager.h"
+#include "Managers/objectmanager.h"
 #include <iostream>
 using namespace std;
 
@@ -30,8 +30,11 @@ void Game::Init()
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 
-    window = SDL_CreateWindow("Cube", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                              width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("Cube",
+                              SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED,
+                              width, height,
+                              SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
 
     if(window == NULL){
         exit(1);
@@ -51,9 +54,9 @@ void Game::Init()
 
     for(int i = 0; i < 100; i++){
         glm::vec3 pos{i, i, -10};
-        ObjectManager::Instance().Add("cube1", new CubeMesh(1, pos));
+        ObjectManager::Instance().Add("cube"+to_string(i), new CubeMesh(1, pos));
     }
-    camera = dynamic_cast<Camera*>(ObjectManager::Instance().Add("camera", new Camera));
+    camera = ObjectManager::Instance().Add("camera", new Camera);
 }
 
 bool Game::IsRunning()
@@ -70,24 +73,20 @@ void Game::HandleEvents()
             running = false;
             break;
         case SDL_KEYDOWN:
-            switch(event.key.keysym.scancode){
-            case SDL_SCANCODE_ESCAPE:
+            switch(event.key.keysym.sym){
+            case SDLK_ESCAPE:
                 running = false;
                 break;
-            case SDL_SCANCODE_LEFT:
-                cout<<"Moving left\n";
+            case SDLK_a:
                 camera->transform.Move({-0.1, 0, 0});
                 break;
-            case SDL_SCANCODE_RIGHT:
-                cout<<"Moving right\n";
+            case SDLK_d:
                 camera->transform.Move({0.1, 0, 0});
                 break;
-            case SDL_SCANCODE_UP:
-                cout<<"Moving up\n";
+            case SDLK_w:
                 camera->transform.Move({0, 0.1, 0});
                 break;
-            case SDL_SCANCODE_DOWN:
-                cout<<"Moving down\n";
+            case SDLK_s:
                 camera->transform.Move({0, -0.1, 0});
                 break;
             }
@@ -108,18 +107,22 @@ void Game::Tick()
     Game::Instance().Draw();
 
     fpsData.timeElapsed = SDL_GetTicks() - frameStart;
+    cout<<"Raw tick time "<<fpsData.timeElapsed<<"  ";
     if(frameTime > fpsData.timeElapsed){
         SDL_Delay(frameTime - fpsData.timeElapsed);
     }
+    cout<<"Tick time "<<SDL_GetTicks() -frameStart<<endl;
+    cout.flush();
+    cout.seekp(0, ios::beg);
 }
 
 void Game::Draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef(camera->transform.position.x,
-                 camera->transform.position.y,
-                 camera->transform.position.z);
+    glTranslatef(-camera->transform.position.x,
+                 -camera->transform.position.y,
+                 -camera->transform.position.z);
     ObjectManager::Instance().Draw();
     SwapBuffer();
 }

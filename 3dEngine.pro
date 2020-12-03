@@ -14,11 +14,24 @@ unix{
 }
 LIBS += -lSDL2main -lSDL2 -lSDL2_image
 
+INCLUDEPATH += src/
+
 SOURCES += \
         main.cpp \
-        $${files(src/*.cpp, true)}
+        src/Managers/keyboardmanager.cpp \
+        src/Managers/objectmanager.cpp \
+        src/Objects/camera.cpp \
+        src/Objects/cubemesh.cpp \
+        src/game.cpp
 
 HEADERS += \
-        $${files(src/*.h, true)}
+    src/Managers/keyboardmanager.h \
+    src/Managers/objectmanager.h \
+    src/Objects/camera.h \
+    src/Objects/color.h \
+    src/Objects/cubemesh.h \
+    src/Objects/gameobject.h \
+    src/Objects/transform.h \
+    src/game.h \
+    src/glIncludes.h
 
-INCLUDEPATH += src/

@@ -4,7 +4,7 @@
 #include "glIncludes.h"
 
 #include "Objects/cubemesh.h"
-#include "Camera/camera.h"
+#include "Objects/camera.h"
 #include <vector>
 
 class Game
@@ -32,7 +32,7 @@ private:
         float fps = 60.f;
         float timeElapsed = 0.f;
     } fpsData;
-    Camera* camera;
+    GameObject* camera;
 
 };
 
