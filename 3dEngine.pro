@@ -25,10 +25,11 @@ SOURCES += \
         src/Managers/objectmanager.cpp \
         src/Objects/camera.cpp \
         src/Objects/gameobject.cpp \
-        src/game.cpp
+        src/Objects/game.cpp
 
 HEADERS += \
         #$${files(src/*.h, true)} \
+        examplegame.h \
         src/Components/component.h \
         src/Components/meshcomponent.h \
         src/Components/physicscomponent.h \
@@ -38,5 +39,5 @@ HEADERS += \
         src/Objects/color.h \
         src/Objects/gameobject.h \
         src/Objects/transform.h \
-        src/game.h \
+        src/Objects/game.h \
         src/glIncludes.h

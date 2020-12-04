@@ -8,7 +8,8 @@
 class Game
 {
 public:
-    static Game& Instance();
+    Game();
+    virtual ~Game();
     void Init();
     bool IsRunning();
     void HandleEvents();
@@ -19,9 +20,12 @@ public:
     void Destroy();
     void SetClearColor(Color c);
 
-private:
-    Game();
-    static Game* selfInstance;
+    virtual void onTick(){}
+    virtual void beforeUpdate(){}
+    virtual void afterUpdate(){}
+    virtual void beforeDestroy(){}
+
+protected:
     SDL_Window *window;
     SDL_GLContext glcontext;
     Color clearColor{0.f, 0.f, 0.f};

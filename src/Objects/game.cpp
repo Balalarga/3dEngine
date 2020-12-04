@@ -5,18 +5,14 @@
 #include <iostream>
 using namespace std;
 
-Game* Game::selfInstance = nullptr;
-
 Game::Game()
 {
 
 }
 
-Game &Game::Instance()
+Game::~Game()
 {
-    if(!selfInstance)
-        selfInstance = new Game();
-    return *selfInstance;
+
 }
 
 void Game::Init()
@@ -31,8 +27,9 @@ void Game::Init()
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
 
-    window = SDL_CreateWindow("Cube",
+    window = SDL_CreateWindow("GameEngine",
                               SDL_WINDOWPOS_CENTERED,
                               SDL_WINDOWPOS_CENTERED,
                               width, height,
@@ -123,16 +120,15 @@ void Game::Tick()
     float frameTime = 1000.f/fpsData.fps;
     float frameStart = SDL_GetTicks();
 
-    Game::Instance().HandleEvents();
-    Game::Instance().Update();
-    Game::Instance().Draw();
+    HandleEvents();
+    Update();
+    Draw();
 
     fpsData.timeElapsed = SDL_GetTicks() - frameStart;
-    cout<<"Raw tick time "<<fpsData.timeElapsed<<"  ";
     if(frameTime > fpsData.timeElapsed){
         SDL_Delay(frameTime - fpsData.timeElapsed);
     }
-    cout<<"Tick time "<<SDL_GetTicks() - frameStart<<endl;
+    onTick();
 }
 
 void Game::Draw()
@@ -150,8 +146,11 @@ void Game::Draw()
 }
 
 void Game::Update(){
+    beforeUpdate();
+
     ObjectManager::Instance().Update(fpsData.timeElapsed/1000.f);
-    cout<<"Update time: "<<fpsData.timeElapsed/1000.f;
+
+    afterUpdate();
 }
 
 void Game::SwapBuffer()
@@ -162,6 +161,7 @@ void Game::SwapBuffer()
 
 void Game::Destroy()
 {
+    beforeDestroy();
     ObjectManager::Instance().Clear();
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
