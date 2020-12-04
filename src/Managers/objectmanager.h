@@ -1,7 +1,7 @@
 #ifndef OBJECTMANAGER_H
 #define OBJECTMANAGER_H
 
-#include "gameobject.h"
+#include "Objects/gameobject.h"
 #include <string>
 #include <unordered_map>
 

@@ -1,10 +1,6 @@
 #include "game.h"
-<<<<<<< HEAD
-#include "Objects/objectmanager.h"
 #include "Components/meshcomponent.h"
-=======
 #include "Managers/objectmanager.h"
->>>>>>> c04c1593ddad62dbf5e67e20dcf586cd8da9eae2
 #include <iostream>
 using namespace std;
 
@@ -57,7 +53,6 @@ void Game::Init()
     gluPerspective(45.0f, (float) width / (float) height, 0.1f, 100.0f);
     glMatrixMode(GL_MODELVIEW);
 
-<<<<<<< HEAD
     vector<glm::vec3> points{
         {-1, 0, 0}, {0,  1, 0}, {1, 0, 0},
         {-1, 0, 0}, {0, -1, 0}, {1, 0, 0},
@@ -66,14 +61,7 @@ void Game::Init()
     object->AddComponent<MeshComponent>(points);
 
     camera = ObjectManager::Instance().Add<Camera>("camera");
-    camera->Move({0, 0, -5});
-=======
-    for(int i = 0; i < 100; i++){
-        glm::vec3 pos{i, i, -10};
-        ObjectManager::Instance().Add("cube"+to_string(i), new CubeMesh(1, pos));
-    }
-    camera = ObjectManager::Instance().Add("camera", new Camera);
->>>>>>> c04c1593ddad62dbf5e67e20dcf586cd8da9eae2
+    camera->Move({0, 0, -10});
 }
 
 bool Game::IsRunning()
@@ -94,31 +82,17 @@ void Game::HandleEvents()
             case SDLK_ESCAPE:
                 running = false;
                 break;
-<<<<<<< HEAD
-            case SDL_SCANCODE_LEFT:
-                camera->Move({-0.1, 0, 0});
-                break;
-            case SDL_SCANCODE_RIGHT:
+            case SDLK_a:
                 camera->Move({0.1, 0, 0});
                 break;
-            case SDL_SCANCODE_UP:
-                camera->Move({0, 0.1, 0});
-                break;
-            case SDL_SCANCODE_DOWN:
-                camera->Move({0, -0.1, 0});
-=======
-            case SDLK_a:
-                camera->transform.Move({-0.1, 0, 0});
-                break;
             case SDLK_d:
-                camera->transform.Move({0.1, 0, 0});
+                camera->Move({-0.1, 0, 0});
                 break;
             case SDLK_w:
-                camera->transform.Move({0, 0.1, 0});
+                camera->Move({0, 0, 0.1});
                 break;
             case SDLK_s:
-                camera->transform.Move({0, -0.1, 0});
->>>>>>> c04c1593ddad62dbf5e67e20dcf586cd8da9eae2
+                camera->Move({0, 0, -0.1});
                 break;
             }
             break;
@@ -152,9 +126,9 @@ void Game::Draw()
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef(-camera->transform.position.x,
-                 -camera->transform.position.y,
-                 -camera->transform.position.z);
+    glTranslatef(camera->transform.position.x,
+                 camera->transform.position.y,
+                 camera->transform.position.z);
     ObjectManager::Instance().Draw();
     SwapBuffer();
 }

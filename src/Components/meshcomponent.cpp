@@ -5,7 +5,6 @@ MeshComponent::MeshComponent(vector<glm::vec3> vertecies):
     vertecies(vertecies)
 {
 }
-#include <iostream>
 
 void MeshComponent::Draw()
 {

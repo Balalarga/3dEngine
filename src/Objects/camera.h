@@ -7,8 +7,6 @@
 class Camera: public GameObject
 {
 public:
-    Camera();
 
 };
-
 #endif // CAMERA_H

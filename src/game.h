@@ -2,8 +2,6 @@
 #define GAME_H
 
 #include "glIncludes.h"
-
-#include "Objects/cubemesh.h"
 #include "Objects/camera.h"
 #include <vector>
 
@@ -35,7 +33,6 @@ private:
         float timeElapsed = 0.f;
     } fpsData;
     GameObject* camera;
-
 };
 
 #endif // GAME_H

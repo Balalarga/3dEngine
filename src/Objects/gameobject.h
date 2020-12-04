@@ -60,15 +60,19 @@ public:
     bool HasComponent(){
         return components.find(&typeid(T)) != components.end();
     }
+
     void Move(glm::vec3 dPosition){
         transform.position += dPosition;
     }
+
     void Rotate(glm::vec3 dAngle){
         transform.rotation += dAngle;
     }
+
     void Scale(glm::vec3 dScale){
         transform.scale += dScale;
     }
+
     Color color{1.f, 1.f, 1.f};
     Transform transform;
 
