@@ -4,7 +4,7 @@
 #include "glIncludes.h"
 
 #include "Objects/cubemesh.h"
-#include "Camera/camera.h"
+#include "Objects/camera.h"
 #include <vector>
 
 class Game
