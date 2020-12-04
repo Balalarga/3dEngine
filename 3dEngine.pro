@@ -20,15 +20,18 @@ SOURCES += \
         main.cpp \
         #$${files(src/*.cpp, true)}
         src/Components/meshcomponent.cpp \
+        src/Components/physicscomponent.cpp \
         src/Managers/keyboardmanager.cpp \
         src/Managers/objectmanager.cpp \
         src/Objects/camera.cpp \
+        src/Objects/gameobject.cpp \
         src/game.cpp
 
 HEADERS += \
         #$${files(src/*.h, true)} \
         src/Components/component.h \
         src/Components/meshcomponent.h \
+        src/Components/physicscomponent.h \
         src/Managers/keyboardmanager.h \
         src/Managers/objectmanager.h \
         src/Objects/camera.h \

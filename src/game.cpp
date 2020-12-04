@@ -1,4 +1,5 @@
 #include "game.h"
+#include "Components/physicscomponent.h"
 #include "Components/meshcomponent.h"
 #include "Managers/objectmanager.h"
 #include <iostream>
@@ -61,6 +62,7 @@ void Game::Init()
     object->AddComponent<MeshComponent>(points);
 
     camera = ObjectManager::Instance().Add<Camera>("camera");
+    camera->AddComponent<PhysicsComponent>();
     camera->Move({0, 0, -10});
 }
 
@@ -72,6 +74,7 @@ bool Game::IsRunning()
 void Game::HandleEvents()
 {
     SDL_Event event;
+    auto cameraPhycics = camera->GetComponent<PhysicsComponent>();
     while ( SDL_PollEvent(&event) ){
         switch(event.type){
         case SDL_QUIT:
@@ -83,20 +86,33 @@ void Game::HandleEvents()
                 running = false;
                 break;
             case SDLK_a:
-                camera->Move({0.1, 0, 0});
+                cameraPhycics->velocity.x = 10;
                 break;
             case SDLK_d:
-                camera->Move({-0.1, 0, 0});
+                cameraPhycics->velocity.x = -10;
                 break;
             case SDLK_w:
-                camera->Move({0, 0, 0.1});
+                cameraPhycics->velocity.z = 10;
                 break;
             case SDLK_s:
-                camera->Move({0, 0, -0.1});
+                cameraPhycics->velocity.z = -10;
                 break;
             }
             break;
         case SDL_KEYUP:
+            switch(event.key.keysym.sym){
+            case SDLK_ESCAPE:
+                running = false;
+                break;
+            case SDLK_a:
+            case SDLK_d:
+                cameraPhycics->velocity.x = 0;
+                break;
+            case SDLK_w:
+            case SDLK_s:
+                cameraPhycics->velocity.z = 0;
+                break;
+            }
             break;
         }
     }
@@ -116,25 +132,26 @@ void Game::Tick()
     if(frameTime > fpsData.timeElapsed){
         SDL_Delay(frameTime - fpsData.timeElapsed);
     }
-    cout<<"Tick time "<<SDL_GetTicks() -frameStart<<endl;
-    cout.flush();
-    cout.seekp(0, ios::beg);
+    cout<<"Tick time "<<SDL_GetTicks() - frameStart<<endl;
 }
 
 void Game::Draw()
 {
-    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslatef(camera->transform.position.x,
                  camera->transform.position.y,
                  camera->transform.position.z);
+    glRotatef(camera->transform.rotation.x, 1.f, 0.f, 0.f);
+    glRotatef(camera->transform.rotation.y, 0.f, 1.f, 0.f);
+    glRotatef(camera->transform.rotation.z, 0.f, 0.f, 1.f);
     ObjectManager::Instance().Draw();
     SwapBuffer();
 }
 
 void Game::Update(){
-    ObjectManager::Instance().Update(fpsData.timeElapsed);
+    ObjectManager::Instance().Update(fpsData.timeElapsed/1000.f);
+    cout<<"Update time: "<<fpsData.timeElapsed/1000.f;
 }
 
 void Game::SwapBuffer()
@@ -154,5 +171,6 @@ void Game::Destroy()
 void Game::SetClearColor(Color c)
 {
     clearColor = c;
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
 }
 
