@@ -1,5 +1,6 @@
 #include "game.h"
 #include "Objects/objectmanager.h"
+#include "Components/meshcomponent.h"
 #include <iostream>
 using namespace std;
 
@@ -49,11 +50,15 @@ void Game::Init()
     gluPerspective(45.0f, (float) width / (float) height, 0.1f, 100.0f);
     glMatrixMode(GL_MODELVIEW);
 
-    for(int i = 0; i < 100; i++){
-        glm::vec3 pos{i, i, -10};
-        ObjectManager::Instance().Add("cube1", new CubeMesh(1, pos));
-    }
-    camera = dynamic_cast<Camera*>(ObjectManager::Instance().Add("camera", new Camera));
+    vector<glm::vec3> points{
+        {-1, 0, 0}, {0,  1, 0}, {1, 0, 0},
+        {-1, 0, 0}, {0, -1, 0}, {1, 0, 0},
+    };
+    auto object = ObjectManager::Instance().Add<GameObject>("object1");
+    object->AddComponent<MeshComponent>(points);
+
+    camera = ObjectManager::Instance().Add<Camera>("camera");
+    camera->Move({0, 0, -5});
 }
 
 bool Game::IsRunning()
@@ -75,20 +80,16 @@ void Game::HandleEvents()
                 running = false;
                 break;
             case SDL_SCANCODE_LEFT:
-                cout<<"Moving left\n";
-                camera->transform.Move({-0.1, 0, 0});
+                camera->Move({-0.1, 0, 0});
                 break;
             case SDL_SCANCODE_RIGHT:
-                cout<<"Moving right\n";
-                camera->transform.Move({0.1, 0, 0});
+                camera->Move({0.1, 0, 0});
                 break;
             case SDL_SCANCODE_UP:
-                cout<<"Moving up\n";
-                camera->transform.Move({0, 0.1, 0});
+                camera->Move({0, 0.1, 0});
                 break;
             case SDL_SCANCODE_DOWN:
-                cout<<"Moving down\n";
-                camera->transform.Move({0, -0.1, 0});
+                camera->Move({0, -0.1, 0});
                 break;
             }
             break;
@@ -115,6 +116,7 @@ void Game::Tick()
 
 void Game::Draw()
 {
+    glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     glTranslatef(camera->transform.position.x,
@@ -140,5 +142,10 @@ void Game::Destroy()
     SDL_GL_DeleteContext(glcontext);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void Game::SetClearColor(Color c)
+{
+    clearColor = c;
 }
 

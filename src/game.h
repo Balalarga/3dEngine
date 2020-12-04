@@ -19,12 +19,14 @@ public:
     void Update();
     void SwapBuffer();
     void Destroy();
+    void SetClearColor(Color c);
 
 private:
     Game();
     static Game* selfInstance;
     SDL_Window *window;
     SDL_GLContext glcontext;
+    Color clearColor{0.f, 0.f, 0.f};
     int width = 640;
     int height = 480;
     bool running = true;
@@ -32,7 +34,7 @@ private:
         float fps = 60.f;
         float timeElapsed = 0.f;
     } fpsData;
-    Camera* camera;
+    GameObject* camera;
 
 };
 

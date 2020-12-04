@@ -16,17 +16,6 @@ void ObjectManager::Clear()
     }
 }
 
-GameObject *ObjectManager::Add(std::string name, GameObject *&&object)
-{
-    auto pos = objects.find(name);
-    if(pos == objects.end()){
-        objects.insert({name, object});
-        return object;
-    }else
-        delete object;
-    return nullptr;
-}
-
 void ObjectManager::Remove(std::string name)
 {
     auto pos = objects.find(name);
@@ -46,11 +35,8 @@ GameObject *ObjectManager::Get(std::string name)
 
 void ObjectManager::Draw()
 {
-    for(auto i: objects){
-        glPushMatrix();
+    for(auto i: objects)
         i.second->Draw();
-        glPopMatrix();
-    }
 }
 
 void ObjectManager::Update(double dt)
