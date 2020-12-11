@@ -1,19 +1,15 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <iostream>
 
 namespace Log {
-#include <iostream>
-using namespace std;
 
-template <class T>
-void info(T msg){
-    cout<<msg;
+void info(std::string msg){
+    std::cout<<msg;
 }
-template <class T>
-void infoln(T msg){
+void infoln(std::string msg){
     info(msg);
-    info('\n');
 }
 
 }

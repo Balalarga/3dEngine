@@ -2,8 +2,7 @@
 #include "Components/physicscomponent.h"
 #include "Components/meshcomponent.h"
 #include "Managers/objectmanager.h"
-#include <iostream>
-using namespace std;
+#include "Utils/utils.h"
 
 Game::Game()
 {
@@ -19,7 +18,7 @@ void Game::Init()
 {
 
     if ( SDL_Init(SDL_INIT_VIDEO) < 0 ){
-        cout << "Unable to init SDL, error: " << SDL_GetError() << endl;
+        Log::info("Unable to init SDL, error: ");
         exit(1);
     }
 
@@ -27,7 +26,7 @@ void Game::Init()
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    SDL_SetRelativeMouseMode(SDL_TRUE);
+//    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     window = SDL_CreateWindow("GameEngine",
                               SDL_WINDOWPOS_CENTERED,
