@@ -17,6 +17,7 @@ LIBS += -lSDL2main -lSDL2 -lSDL2_image
 INCLUDEPATH += src/
 
 SOURCES += \
+        Utils/utils.cpp \
         main.cpp \
         #$${files(src/*.cpp, true)}
         src/Components/meshcomponent.cpp \
@@ -29,6 +30,7 @@ SOURCES += \
 
 HEADERS += \
         #$${files(src/*.h, true)} \
+        Utils/utils.h \
         examplegame.h \
         src/Components/component.h \
         src/Components/meshcomponent.h \
