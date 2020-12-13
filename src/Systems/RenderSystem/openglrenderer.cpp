@@ -76,7 +76,7 @@ void OpenGLRenderer::Draw(const ObjectDescriptor& desc) const
     glUseProgram(desc.shaderProgram);
     glBindVertexArray(desc.vertexArrayObject);
 
-    glDrawArrays(GL_TRIANGLES, 0, desc.vertexCount);
+    glDrawElements(GL_TRIANGLES, desc.vertexCount, GL_UNSIGNED_INT, 0);
 
     glUseProgram(0);
     glBindVertexArray(0);
@@ -89,20 +89,30 @@ void OpenGLRenderer::Clear() const
 
 ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
 {
-    unsigned shaderProgram;
+    GLuint vertexArrayObject = 0;
+    glGenVertexArrays(1, &vertexArrayObject);
+    glBindVertexArray(vertexArrayObject);
+
     GLuint vbo = 0;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,
                  data.verteces.size()*sizeof(data.verteces[0]),
-            &data.verteces.front(),
-            GL_STATIC_DRAW);
-    GLuint vertexArrayObject = 0;
-    glGenVertexArrays(1, &vertexArrayObject);
-    glBindVertexArray(vertexArrayObject);
+            &data.verteces.front(), GL_STATIC_DRAW);
+
+    GLuint ebo = 0;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                 data.indices.size()*sizeof(data.indices[0]),
+            &data.indices.front(), GL_STATIC_DRAW);
+
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+
+    unsigned shaderProgram;
 
     const char* vertexShaderSource;
     const char* fragmentShaderSource;
@@ -139,7 +149,7 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     glCompileShader(fragmentShader);
 
     ObjectDescriptor desc;
-    desc.vertexCount = data.verteces.size();
+    desc.vertexCount = data.indices.size();
     desc.vertexArrayObject = vertexArrayObject;
     if(!checkShader(vertexShader) || !checkShader(fragmentShader)){
         return desc;
