@@ -53,6 +53,4 @@ HEADERS += \
         src/glIncludes.h \
         src/Utils/utils.h
 
-DISTFILES += \
-    src/Data/defaultShader.fs \
-    src/Data/defaultShader.vs
+DISTFILES +=

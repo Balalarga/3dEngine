@@ -8,6 +8,7 @@
 
 struct MeshData{
     std::vector<glm::vec3> verteces;
+    std::vector<unsigned> indices;
     std::string vertexShaderPath;
     std::string fragmentShaderPath;
 };

@@ -19,7 +19,7 @@ OpenGLRenderer::OpenGLRenderer(std::string title, glm::ivec2 windowSize):
         windowFlags |= SDL_WINDOW_FULLSCREEN;
     }
 
-//    SDL_SetRelativeMouseMode(SDL_TRUE);
+    //    SDL_SetRelativeMouseMode(SDL_TRUE);
 
     window = SDL_CreateWindow(windowTitle.c_str(),
                               SDL_WINDOWPOS_CENTERED,
@@ -95,8 +95,8 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,
                  data.verteces.size()*sizeof(data.verteces[0]),
-                 &data.verteces.front(),
-                 GL_STATIC_DRAW);
+            &data.verteces.front(),
+            GL_STATIC_DRAW);
     GLuint vertexArrayObject = 0;
     glGenVertexArrays(1, &vertexArrayObject);
     glBindVertexArray(vertexArrayObject);
@@ -111,10 +111,13 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     else
     {
         vertexShaderSource = "#version 410\n"
-                "in vec3 vp;\n"
-                "void main() {\n"
-                    "gl_Position = vec4(vp, 1.0);\n"
-                "}";
+                             "uniform mat4 view;\n"
+                             "uniform mat4 model;\n"
+                             "uniform mat4 projection;\n"
+                             "in vec3 vp;\n"
+                             "void main() {\n"
+                             "gl_Position = projection * view * model * vec4(vp, 1.0);\n"
+                             "}";
     }
 
     if(!data.fragmentShaderPath.empty())
@@ -122,10 +125,10 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     else
     {
         fragmentShaderSource = "#version 410\n"
-                "out vec4 frag_colour;\n"
-                "void main() {\n"
-                    "frag_colour = vec4(0.5, 0.0, 0.5, 1.0);\n"
-                "}";
+                               "out vec4 frag_colour;\n"
+                               "void main() {\n"
+                               "frag_colour = vec4(0.8, 0.8, 0.8, 1.0);\n"
+                               "}";
     }
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -147,6 +150,34 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
     desc.shaderProgram = shaderProgram;
+
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.5f));
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0, 0.0, 2.0),
+                                 glm::vec3(0.0, 0.0, 0.0),
+                                 glm::vec3(0.0, -1.0, 0.0)
+                                 );
+    glm::mat4 projection = glm::perspective(
+                60.f,
+                16/9.f,
+                0.1f, 10.0f);
+
+    const char* uniform_name;
+    uniform_name = "model";
+    int uniform_model = glGetUniformLocation(desc.shaderProgram, uniform_name);
+    uniform_name = "view";
+    int uniform_view = glGetUniformLocation(desc.shaderProgram, uniform_name);
+    uniform_name = "projection";
+    int uniform_proj = glGetUniformLocation(desc.shaderProgram, uniform_name);
+    cout << "model " << uniform_model << endl;
+    cout << "view " << uniform_view << endl;
+    cout << "projection " << uniform_proj << endl;
+
+    glUseProgram(shaderProgram);
+    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(uniform_proj, 1, GL_FALSE, glm::value_ptr(projection));
+    glUseProgram(0);
+
     return desc;
 }
 
