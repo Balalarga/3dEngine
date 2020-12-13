@@ -8,8 +8,6 @@
 #endif
 
 #include <SDL2/SDL.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <glm/glm.hpp>
 
 #endif // GLINCLUDES_H

@@ -1,18 +1,15 @@
 #include "meshcomponent.h"
 #include "Objects/gameobject.h"
+#include "Utils/utils.h"
 
-MeshComponent::MeshComponent(vector<glm::vec3> vertecies):
-    vertecies(vertecies)
+MeshComponent::MeshComponent(MeshData data)
 {
+    verteces = data.verteces;
+    descriptor = RenderSystem::Instance().GetRender()->CreateDescriptor(data);
 }
 
 void MeshComponent::Draw()
 {
-    assert(vertecies.size()%3 == 0);
-    glBegin(GL_TRIANGLES);
-    for(auto i: vertecies){
-        glVertex3f(i.x, i.y, i.z);
-    }
-
-    glEnd();
+    RenderSystem::Instance().GetRender()->Draw(descriptor);
 }
+

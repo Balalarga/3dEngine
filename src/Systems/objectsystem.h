@@ -1,24 +1,27 @@
-#ifndef OBJECTMANAGER_H
-#define OBJECTMANAGER_H
+#ifndef OBJECTSYSTEM_H
+#define OBJECTSYSTEM_H
 
 #include "Objects/gameobject.h"
 #include <string>
 #include <unordered_map>
 
-class ObjectManager
+class ObjectSystem
 {
 public:
-    static ObjectManager& Instance();
+    static ObjectSystem& Instance();
     void Clear();
 
     template<typename T, typename... TArgs>
-    T* Add(std::string name, TArgs&&... args){
+    T* Add(std::string name, TArgs&&... args)
+    {
         T* object(new T(std::forward<TArgs>(args)...));
         auto pos = objects.find(name);
-        if(pos == objects.end()){
+        if(pos == objects.end())
+        {
             objects.insert({name, object});
             return object;
-        }else
+        }
+        else
             delete object;
         return nullptr;
     }
@@ -26,7 +29,8 @@ public:
     void Remove(std::string name);
     GameObject* Get(std::string name);
     template<class T>
-    T* GetClass(std::string name){
+    T* GetClass(std::string name)
+    {
         GameObject* obj = Get(name);
         return dynamic_cast<T*>(obj);
     }
@@ -35,9 +39,9 @@ public:
 
 
 private:
-    static ObjectManager* selfInstance;
-    ObjectManager();
+    static ObjectSystem* selfInstance;
+    ObjectSystem();
     std::unordered_map<std::string, GameObject*> objects;
 };
 
-#endif // OBJECTMANAGER_H
+#endif // OBJECTSYSTEM_H

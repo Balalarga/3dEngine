@@ -1,18 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <string>
 #include <iostream>
-
-namespace Log {
-
-void info(std::string msg){
-    std::cout<<msg;
-}
-void infoln(std::string msg){
-    info(msg);
-}
-
-}
-
+using std::cout;
+using std::endl;
 
 #endif // UTILS_H

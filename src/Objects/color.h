@@ -1,7 +1,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-struct Color{
+struct Color
+{
     float r, g, b;
 };
 

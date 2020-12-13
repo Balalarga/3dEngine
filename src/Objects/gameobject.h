@@ -16,7 +16,8 @@ public:
     virtual void Draw();
 
     template<typename T, typename... TArgs>
-    T* AddComponent(TArgs&&... args){
+    T* AddComponent(TArgs&&... args)
+    {
         T* component(new T(std::forward<TArgs>(args)...));
         component->parent = this;
         components[&typeid(*component)] = component;
@@ -25,12 +26,14 @@ public:
     }
 
     template<class T>
-    T* GetComponent(){
+    T* GetComponent()
+    {
         return static_cast<T*>(components[&typeid(T)]);
     }
 
     template<class T>
-    bool HasComponent(){
+    bool HasComponent()
+    {
         return components.find(&typeid(T)) != components.end();
     }
 
