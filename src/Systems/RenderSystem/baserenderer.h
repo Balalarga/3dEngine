@@ -6,17 +6,24 @@
 #include <list>
 #include <vector>
 
+enum class DrawType{
+    TRIANGLES,
+    QUADS
+};
+
 struct MeshData{
     std::vector<glm::vec3> verteces;
     std::vector<unsigned> indices;
     std::string vertexShaderPath;
     std::string fragmentShaderPath;
+    DrawType drawType = DrawType::TRIANGLES;
 };
 
 struct ObjectDescriptor{
     unsigned vertexArrayObject = 0;
     unsigned shaderProgram = 0;
     unsigned vertexCount = 0;
+    DrawType drawType = DrawType::TRIANGLES;
 };
 
 class BaseRenderer

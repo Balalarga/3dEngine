@@ -4,5 +4,6 @@
 #include "inputsystem.h"
 #include "objectsystem.h"
 #include "RenderSystem/rendersystem.h"
+#include "FileSystem/filesystem.h"
 
 #endif // ALL_H
