@@ -76,7 +76,9 @@ void OpenGLRenderer::Draw(const ObjectDescriptor& desc) const
     glUseProgram(desc.shaderProgram);
     glBindVertexArray(desc.vertexArrayObject);
 
-    glDrawElements(GL_TRIANGLES, desc.vertexCount, GL_UNSIGNED_INT, 0);
+    GLenum mode = desc.drawType == DrawType::TRIANGLES ? GL_TRIANGLES : GL_QUADS;
+
+    glDrawElements(mode, desc.vertexCount, GL_UNSIGNED_INT, 0);
 
     glUseProgram(0);
     glBindVertexArray(0);
@@ -117,7 +119,7 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     const char* vertexShaderSource;
     const char* fragmentShaderSource;
     if(!data.vertexShaderPath.empty())
-        vertexShaderSource = FileSystem::readFile(data.vertexShaderPath).c_str();
+        vertexShaderSource = FileSystem::ReadFile(data.vertexShaderPath).c_str();
     else
     {
         vertexShaderSource = "#version 410\n"
@@ -131,7 +133,7 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     }
 
     if(!data.fragmentShaderPath.empty())
-        fragmentShaderSource = FileSystem::readFile(data.fragmentShaderPath).c_str();
+        fragmentShaderSource = FileSystem::ReadFile(data.fragmentShaderPath).c_str();
     else
     {
         fragmentShaderSource = "#version 410\n"
@@ -151,6 +153,7 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     ObjectDescriptor desc;
     desc.vertexCount = data.indices.size();
     desc.vertexArrayObject = vertexArrayObject;
+    desc.drawType = data.drawType;
     if(!checkShader(vertexShader) || !checkShader(fragmentShader)){
         return desc;
     }
@@ -161,10 +164,10 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     glLinkProgram(shaderProgram);
     desc.shaderProgram = shaderProgram;
 
-    glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.5f));
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0, 0.0, 2.0),
-                                 glm::vec3(0.0, 0.0, 0.0),
-                                 glm::vec3(0.0, -1.0, 0.0)
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.2f),
+                                 glm::vec3(0.0f, 0.0f, 0.0f),
+                                 glm::vec3(0.0f, -1.0f, 0.0f)
                                  );
     glm::mat4 projection = glm::perspective(
                 60.f,
@@ -178,9 +181,6 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     int uniform_view = glGetUniformLocation(desc.shaderProgram, uniform_name);
     uniform_name = "projection";
     int uniform_proj = glGetUniformLocation(desc.shaderProgram, uniform_name);
-    cout << "model " << uniform_model << endl;
-    cout << "view " << uniform_view << endl;
-    cout << "projection " << uniform_proj << endl;
 
     glUseProgram(shaderProgram);
     glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));

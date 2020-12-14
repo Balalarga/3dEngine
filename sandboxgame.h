@@ -43,16 +43,7 @@ public:
     void Configurate()
     {
         auto object = ObjectSystem::Instance().Add<GameObject>("object1");
-        MeshData meshData;
-        meshData.verteces = {
-            {0.0f, 1.0f, 0.0f},
-            {1.0f, 1.0f, 0.0f},
-            {1.0f, 0.0f, 0.0f},
-            {-1.0f, 0.0f, 0.0f},
-            {-1.0f, 1.0f, 0.0f},
-        };
-        meshData.indices = {0, 1, 2, 0, 3, 4};
-        object->AddComponent<MeshComponent>(meshData);
+        object->AddComponent<MeshComponent>(FileSystem::ReadObj("../data/cube.obj"));
     }
 };
 
