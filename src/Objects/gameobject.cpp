@@ -22,18 +22,3 @@ void GameObject::Draw()
     for(auto& pair: components)
         pair.second->Draw();
 };
-
-void GameObject::Move(glm::vec3 dPosition)
-{
-    transform.position += dPosition;
-}
-
-void GameObject::Rotate(glm::vec3 dAngle)
-{
-    transform.rotation += dAngle;
-}
-
-void GameObject::Scale(glm::vec3 dScale)
-{
-    transform.scale += dScale;
-}

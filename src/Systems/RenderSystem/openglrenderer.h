@@ -10,7 +10,7 @@ public:
     OpenGLRenderer(std::string title, glm::ivec2 windowSize);
     ~OpenGLRenderer();
     void SwapBuffers() const override;
-    void Draw(const ObjectDescriptor& desc) const override;
+    void Draw(const ObjectDescriptor& desc, const glm::mat4 &modelMatrix) const override;
     void Clear() const override;
     ObjectDescriptor CreateDescriptor(MeshData &data) const override;
 

@@ -21,6 +21,7 @@ SOURCES += \
         #$${files(src/*.cpp, true)}
         src/Components/meshcomponent.cpp \
         src/Components/physicscomponent.cpp \
+        src/Objects/camera.cpp \
         src/Objects/gameobject.cpp \
         src/Objects/game.cpp \
         src/Systems/FileSystem/filesystem.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
         src/Components/components.h \
         src/Components/meshcomponent.h \
         src/Components/physicscomponent.h \
+        src/Objects/camera.h \
         src/Objects/color.h \
         src/Objects/gameobject.h \
         src/Objects/transform.h \

@@ -71,9 +71,11 @@ void OpenGLRenderer::SwapBuffers() const
     SDL_GL_SwapWindow(window);
 }
 
-void OpenGLRenderer::Draw(const ObjectDescriptor& desc) const
+void OpenGLRenderer::Draw(const ObjectDescriptor& desc, const glm::mat4& modelMatrix) const
 {
     glUseProgram(desc.shaderProgram);
+//    int uniform_model = glGetUniformLocation(desc.shaderProgram, "model");
+//    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glBindVertexArray(desc.vertexArrayObject);
 
     GLenum mode = desc.drawType == DrawType::TRIANGLES ? GL_TRIANGLES : GL_QUADS;
@@ -164,8 +166,7 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     glLinkProgram(shaderProgram);
     desc.shaderProgram = shaderProgram;
 
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.2f),
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 20.f),
                                  glm::vec3(0.0f, 0.0f, 0.0f),
                                  glm::vec3(0.0f, -1.0f, 0.0f)
                                  );
@@ -183,7 +184,7 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     int uniform_proj = glGetUniformLocation(desc.shaderProgram, uniform_name);
 
     glUseProgram(shaderProgram);
-    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(glm::mat4(1)));
     glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(uniform_proj, 1, GL_FALSE, glm::value_ptr(projection));
     glUseProgram(0);
