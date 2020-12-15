@@ -7,7 +7,7 @@
 class CameraComponent: public Component
 {
 public:
-    glm::mat4 GetViewMatrix();
+    glm::fmat4 GetViewMatrix();
 };
 
 #endif // CAMERACOMPONENT_H

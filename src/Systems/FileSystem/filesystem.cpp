@@ -49,7 +49,7 @@ MeshData FileSystem::ReadObj(const string &filename)
         file >> token;
         if(token == "v")
         {
-            glm::vec3 vertex;
+            glm::fvec3 vertex;
             file >> vertex.x;
             file >> vertex.y;
             file >> vertex.z;

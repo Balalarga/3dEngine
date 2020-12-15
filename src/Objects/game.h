@@ -40,7 +40,7 @@ protected:
     bool running = true;
     struct FpsData
     {
-        float fps = 60.f;
+        float fps = 120.f;
         float timeElapsed = 0.f;
     } fpsData;
     GameObject* currentCamera;

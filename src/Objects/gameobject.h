@@ -28,7 +28,10 @@ public:
     template<class T>
     T* GetComponent()
     {
-        return static_cast<T*>(components[&typeid(T)]);
+        if(HasComponent<T>())
+            return static_cast<T*>(components[&typeid(T)]);
+        else
+            return nullptr;
     }
 
     template<class T>

@@ -14,7 +14,7 @@ public:
     MeshComponent(MeshData data);
     void Draw() override;
 
-    vector<glm::vec3> verteces;
+    vector<glm::fvec3> verteces;
     ObjectDescriptor descriptor;
 };
 

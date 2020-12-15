@@ -7,6 +7,7 @@ Game::Game()
 {
     currentCamera = ObjectSystem::Instance().Add<GameObject>("mainCamera");
     currentCamera->AddComponent<CameraComponent>();
+    currentCamera->AddComponent<PhysicsComponent>();
 }
 
 Game::~Game()
@@ -22,6 +23,7 @@ bool Game::IsRunning()
 void Game::HandleEvents()
 {
     SDL_Event event;
+    auto cameraPhysics = currentCamera->GetComponent<PhysicsComponent>();
     while (SDL_PollEvent(&event))
     {
         switch(event.type)
@@ -36,10 +38,20 @@ void Game::HandleEvents()
                 running = false;
                 break;
             case SDLK_d:
-                currentCamera->transform.Move({0, 1, 0});
+                if(cameraPhysics)
+                    cameraPhysics->AddVelocity({1, 0, 0}, 10);
                 break;
             case SDLK_a:
-                currentCamera->transform.Move({0, -1, 0});
+                if(cameraPhysics)
+                    cameraPhysics->AddVelocity({1, 0, 0}, -10);
+                break;
+            case SDLK_w:
+                if(cameraPhysics)
+                    cameraPhysics->AddVelocity({0, 1, 0}, 10);
+                break;
+            case SDLK_s:
+                if(cameraPhysics)
+                    cameraPhysics->AddVelocity({0, 1, 0}, -10);
                 break;
             }
             break;
@@ -48,6 +60,16 @@ void Game::HandleEvents()
             {
             case SDLK_ESCAPE:
                 running = false;
+                break;
+            case SDLK_d:
+            case SDLK_a:
+                if(cameraPhysics)
+                    cameraPhysics->ResetVelocity({1, 0, 0});
+                break;
+            case SDLK_w:
+            case SDLK_s:
+                if(cameraPhysics)
+                    cameraPhysics->ResetVelocity({0, 1, 0});
                 break;
             }
             break;
@@ -65,8 +87,9 @@ void Game::Tick()
     Update();
     Draw();
 
-    fpsData.timeElapsed = SDL_GetTicks() - frameStart;
     OnTick();
+
+    fpsData.timeElapsed = SDL_GetTicks() - frameStart;
     if(frameTime > fpsData.timeElapsed)
     {
         SDL_Delay(frameTime - fpsData.timeElapsed);

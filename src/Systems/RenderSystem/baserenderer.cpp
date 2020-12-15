@@ -12,7 +12,7 @@ BaseRenderer::~BaseRenderer()
 
 }
 
-void BaseRenderer::SetClearColor(glm::vec3 c)
+void BaseRenderer::SetClearColor(glm::fvec3 c)
 {
     clearColor = c;
     ClearColorChanged();
