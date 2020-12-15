@@ -36,6 +36,7 @@ public:
     virtual ~BaseRenderer();
     virtual void Clear() const = 0;
     virtual void SwapBuffers() const = 0;
+    virtual void UpdateViewMatrix(const glm::mat4 view) = 0;
     virtual void Draw(const ObjectDescriptor& desc, const glm::mat4 &modelMatrix) const = 0;
     virtual ObjectDescriptor CreateDescriptor(MeshData &data) const = 0;
 

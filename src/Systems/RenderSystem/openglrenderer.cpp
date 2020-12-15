@@ -57,6 +57,11 @@ OpenGLRenderer::OpenGLRenderer(std::string title, glm::ivec2 windowSize):
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 2.5f),
+                             glm::vec3(0.0f, 0.0f, 0.0f),
+                             glm::vec3(0.0f, -1.0f, 0.0f)
+                             );
 }
 
 OpenGLRenderer::~OpenGLRenderer()
@@ -75,11 +80,18 @@ void OpenGLRenderer::SwapBuffers() const
     SDL_GL_SwapWindow(window);
 }
 
+void OpenGLRenderer::UpdateViewMatrix(const glm::mat4 view)
+{
+    viewMatrix = view;
+}
+
 void OpenGLRenderer::Draw(const ObjectDescriptor& desc, const glm::mat4& modelMatrix) const
 {
     glUseProgram(desc.shaderProgram);
     int uniform_model = glGetUniformLocation(desc.shaderProgram, "model");
     glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    int uniform_view = glGetUniformLocation(desc.shaderProgram, "view");
+    glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
     glBindVertexArray(desc.vertexArrayObject);
 
     GLenum mode = desc.drawType == DrawType::TRIANGLES ? GL_TRIANGLES : GL_QUADS;
@@ -162,23 +174,16 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     desc.drawType = data.drawType;
     desc.shaderProgram = shaderProgram;
 
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.5f),
-                                 glm::vec3(0.0f, 0.0f, 0.0f),
-                                 glm::vec3(0.0f, -1.0f, 0.0f)
-                                 );
     glm::mat4 projection = glm::perspective(
-                60.f,
+                80.f,
                 16/9.f,
                 0.1f, 100.0f);
 
     const char* uniform_name;
-    uniform_name = "view";
-    int uniform_view = glGetUniformLocation(desc.shaderProgram, uniform_name);
     uniform_name = "projection";
     int uniform_proj = glGetUniformLocation(desc.shaderProgram, uniform_name);
 
     glUseProgram(shaderProgram);
-    glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(uniform_proj, 1, GL_FALSE, glm::value_ptr(projection));
     glUseProgram(0);
 

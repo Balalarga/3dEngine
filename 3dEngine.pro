@@ -19,9 +19,9 @@ INCLUDEPATH += src/
 SOURCES += \
         main.cpp \
         #$${files(src/*.cpp, true)}
+        src/Components/cameracomponent.cpp \
         src/Components/meshcomponent.cpp \
         src/Components/physicscomponent.cpp \
-        src/Objects/camera.cpp \
         src/Objects/gameobject.cpp \
         src/Objects/game.cpp \
         src/Systems/FileSystem/filesystem.cpp \
@@ -36,10 +36,10 @@ HEADERS += \
         #$${files(src/*.h, true)} \
         sandboxgame.h \
         src/Components/basecomponent.h \
+        src/Components/cameracomponent.h \
         src/Components/components.h \
         src/Components/meshcomponent.h \
         src/Components/physicscomponent.h \
-        src/Objects/camera.h \
         src/Objects/color.h \
         src/Objects/gameobject.h \
         src/Objects/transform.h \

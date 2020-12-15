@@ -12,6 +12,7 @@ public:
 
     void Clear() const override;
     void SwapBuffers() const override;
+    void UpdateViewMatrix(const glm::mat4 view) override;
     void Draw(const ObjectDescriptor& desc, const glm::mat4 &modelMatrix) const override;
 
     ObjectDescriptor CreateDescriptor(MeshData &data) const override;
@@ -24,6 +25,7 @@ protected:
 private:
     SDL_Window* window;
     SDL_GLContext context;
+    glm::mat4 viewMatrix;
 };
 
 #endif // OPENGLRENDERER_H

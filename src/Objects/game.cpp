@@ -1,12 +1,12 @@
 #include "game.h"
-#include "Components/physicscomponent.h"
-#include "Components/meshcomponent.h"
-#include "Systems/objectsystem.h"
 #include "Utils/utils.h"
 #include "Systems/systems.h"
+#include "Components/components.h"
 
 Game::Game()
 {
+    currentCamera = ObjectSystem::Instance().Add<GameObject>("mainCamera");
+    currentCamera->AddComponent<CameraComponent>();
 }
 
 Game::~Game()
@@ -35,6 +35,12 @@ void Game::HandleEvents()
             case SDLK_ESCAPE:
                 running = false;
                 break;
+            case SDLK_d:
+                currentCamera->transform.Move({0, 1, 0});
+                break;
+            case SDLK_a:
+                currentCamera->transform.Move({0, -1, 0});
+                break;
             }
             break;
         case SDL_KEYUP:
@@ -47,6 +53,7 @@ void Game::HandleEvents()
             break;
         }
     }
+    UpdateCamera();
 }
 
 void Game::Tick()
@@ -56,15 +63,27 @@ void Game::Tick()
 
     HandleEvents();
     Update();
-    RenderSystem::Instance().GetRender()->Clear();
-    ObjectSystem::Instance().Draw();
-    RenderSystem::Instance().GetRender()->SwapBuffers();
+    Draw();
+
     fpsData.timeElapsed = SDL_GetTicks() - frameStart;
     OnTick();
     if(frameTime > fpsData.timeElapsed)
     {
         SDL_Delay(frameTime - fpsData.timeElapsed);
     }
+}
+
+void Game::UpdateCamera()
+{
+    RenderSystem::Instance().GetRender()->
+            UpdateViewMatrix(currentCamera->
+                             GetComponent<CameraComponent>()->GetViewMatrix());
+}
+
+void Game::Draw(){
+    RenderSystem::Instance().GetRender()->Clear();
+    ObjectSystem::Instance().Draw();
+    RenderSystem::Instance().GetRender()->SwapBuffers();
 }
 
 void Game::Update(){
