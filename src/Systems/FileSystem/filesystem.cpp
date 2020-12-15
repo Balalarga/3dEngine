@@ -70,9 +70,7 @@ MeshData FileSystem::ReadObj(const string &filename)
                     idx = stoi(v.substr(0, del))-1;
                     meshData.indices.push_back(idx);
                 }
-                cout<<idx<<" ";
             }
-            cout<<endl;
         }
     }
     if(meshData.verteces.empty()){

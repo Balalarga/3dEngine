@@ -9,14 +9,17 @@ class OpenGLRenderer: public BaseRenderer
 public:
     OpenGLRenderer(std::string title, glm::ivec2 windowSize);
     ~OpenGLRenderer();
+
+    void Clear() const override;
     void SwapBuffers() const override;
     void Draw(const ObjectDescriptor& desc, const glm::mat4 &modelMatrix) const override;
-    void Clear() const override;
+
     ObjectDescriptor CreateDescriptor(MeshData &data) const override;
 
 protected:
-    void clearColorChanged() override;
-    bool checkShader(GLint shader) const;
+    void ClearColorChanged() override;
+    bool CheckShader(GLint shader) const;
+    bool AddShader(GLuint program, GLenum type, const char* source) const;
 
 private:
     SDL_Window* window;
