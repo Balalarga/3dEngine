@@ -16,10 +16,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    while(game->IsRunning())
-    {
-        game->Tick();
-    }
+    game->Run();
 
     delete game;
     return 0;

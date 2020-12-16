@@ -10,39 +10,28 @@ class Game
 {
 public:
     Game();
-    bool IsRunning();
-    void Tick();
+    void Run();
     void UpdateCamera();
+    bool IsRunning();
 
     virtual ~Game();
-    virtual void OnTick()
-    {
-
-    }
-    virtual void BeforeUpdate()
-    {
-
-    }
-    virtual void AfterUpdate()
-    {
-
-    }
-    virtual void BeforeDestroy()
-    {
-    }
+    virtual void OnTick();
+    virtual void BeforeUpdate();
+    virtual void AfterUpdate();
+    virtual void BeforeDestroy();
 
 protected:
     void HandleEvents();
-    void Update();
+    void Update(float dt);
     void Draw();
 
     glm::ivec2 windowSize = {640, 480};
     bool running = true;
-    struct FpsData
+    struct
     {
-        float fps = 120.f;
-        float timeElapsed = 0.f;
-    } fpsData;
+        double updateFrames = 60.0;
+        double renderFrames = 120.0;
+    } timeData;
     GameObject* currentCamera;
 
 };

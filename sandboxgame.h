@@ -44,7 +44,13 @@ public:
     {
         auto object = ObjectSystem::Instance().Add<GameObject>("object1");
         object->AddComponent<MeshComponent>(FileSystem::ReadObj("../data/cube.obj"));
-        currentCamera->transform.Move({0.f, 0.f, 2.5f});
+        object->transform.Move({-2, 0, 0});
+
+        auto object2 = ObjectSystem::Instance().Add<GameObject>("object2");
+        object2->AddComponent<MeshComponent>(FileSystem::ReadObj("../data/cube.obj"));
+        object->transform.Move({2, 0, 0});
+
+        currentCamera->transform.Move({0.f, 0.f, 5.f});
     }
 };
 

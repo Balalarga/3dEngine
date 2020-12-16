@@ -18,6 +18,16 @@ void PhysicsComponent::AddVelocity(glm::bvec3 pos, float value)
         velocity.z += value;
 }
 
+void PhysicsComponent::SetVelocity(glm::bvec3 pos, float value)
+{
+    if(pos.x)
+        velocity.x = value;
+    if(pos.y)
+        velocity.y = value;
+    if(pos.z)
+        velocity.z = value;
+}
+
 void PhysicsComponent::ResetVelocity(glm::bvec3 pos)
 {
     if(pos.x)
