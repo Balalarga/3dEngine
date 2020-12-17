@@ -16,7 +16,7 @@ struct MeshData{
     std::vector<unsigned> indices;
     std::string vertexShaderPath;
     std::string fragmentShaderPath;
-    glm::vec3 color = {1.f, 1.f, 1.f};
+    glm::fvec3 color = {1.f, 1.f, 1.f};
     DrawType drawType = DrawType::TRIANGLES;
 };
 
@@ -25,6 +25,7 @@ struct ObjectDescriptor{
     unsigned shaderProgram = 0;
     unsigned vertexCount = 0;
     DrawType drawType = DrawType::TRIANGLES;
+    glm::fvec3 color;
 };
 
 class BaseRenderer

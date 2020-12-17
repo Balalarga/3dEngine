@@ -92,6 +92,9 @@ void OpenGLRenderer::Draw(const ObjectDescriptor& desc, const glm::fmat4& modelM
     glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     int uniform_view = glGetUniformLocation(desc.shaderProgram, "view");
     glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+    int uniform_color = glGetUniformLocation(desc.shaderProgram, "color");
+    glUniform3fv(uniform_color, 1, glm::value_ptr(desc.color));
     glBindVertexArray(desc.vertexArrayObject);
 
     GLenum mode = desc.drawType == DrawType::TRIANGLES ? GL_TRIANGLES : GL_QUADS;
@@ -151,11 +154,14 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
         fragmentShaderSource = FileSystem::ReadFile(data.fragmentShaderPath).c_str();
     else
     {
-        fragmentShaderSource = "#version 410\n"
-                               "out vec4 frag_colour;\n"
-                               "void main() {\n"
-                               "frag_colour = vec4(0.8, 0.8, 0.8, 1.0);\n"
-                               "}";
+        fragmentShaderSource = R"(
+                               #version 410
+                               uniform vec3 color;
+                               out vec4 frag_color;
+                               void main() {
+                               frag_color = vec4(color, 1.0);
+                               }
+                               )";
     }
 
     unsigned shaderProgram = glCreateProgram();
@@ -173,6 +179,7 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     desc.vertexArrayObject = vertexArrayObject;
     desc.drawType = data.drawType;
     desc.shaderProgram = shaderProgram;
+    desc.color = data.color;
 
     glm::fmat4 projection = glm::perspective(
                 80.f,
