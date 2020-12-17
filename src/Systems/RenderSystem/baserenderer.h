@@ -16,6 +16,7 @@ struct MeshData{
     std::vector<unsigned> indices;
     std::string vertexShaderPath;
     std::string fragmentShaderPath;
+    glm::vec3 color = {1.f, 1.f, 1.f};
     DrawType drawType = DrawType::TRIANGLES;
 };
 
