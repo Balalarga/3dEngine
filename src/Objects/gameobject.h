@@ -1,9 +1,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "glIncludes.h"
 #include "transform.h"
-#include "color.h"
 #include <map>
 
 class Component;
@@ -18,6 +16,8 @@ public:
     template<typename T, typename... TArgs>
     T* AddComponent(TArgs&&... args)
     {
+        if(HasComponent<T>())
+            GetComponent<T>();
         T* component(new T(std::forward<TArgs>(args)...));
         component->parent = this;
         components[&typeid(*component)] = component;
@@ -28,7 +28,9 @@ public:
     template<class T>
     T* GetComponent()
     {
-        return static_cast<T*>(components[&typeid(T)]);
+        if(HasComponent<T>())
+            return static_cast<T*>(components[&typeid(T)]);
+        return nullptr;
     }
 
     template<class T>
@@ -37,11 +39,6 @@ public:
         return components.find(&typeid(T)) != components.end();
     }
 
-    void Move(glm::vec3 dPosition);
-    void Rotate(glm::vec3 dAngle);
-    void Scale(glm::vec3 dScale);
-
-    Color color{1.f, 1.f, 1.f};
     Transform transform;
 
 private:

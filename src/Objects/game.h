@@ -2,7 +2,7 @@
 #define GAME_H
 
 #include "glIncludes.h"
-#include "Objects/gameobject.h"
+#include "gameobject.h"
 #include "Systems/RenderSystem/baserenderer.h"
 #include <vector>
 
@@ -10,36 +10,30 @@ class Game
 {
 public:
     Game();
+    void Run();
+    void Stop();
+    void UpdateCamera();
     bool IsRunning();
-    void HandleEvents();
-    void Tick();
-    void Update();
 
     virtual ~Game();
-    virtual void OnTick()
-    {
-
-    }
-    virtual void BeforeUpdate()
-    {
-
-    }
-    virtual void AfterUpdate()
-    {
-
-    }
-    virtual void BeforeDestroy()
-    {
-    }
+    virtual void OnTick();
+    virtual void BeforeUpdate();
+    virtual void AfterUpdate();
+    virtual void BeforeDestroy();
 
 protected:
-    glm::ivec2 windowSize = {640, 480};
+    void HandleEvents();
+    void Update(float dt);
+    void Draw();
+
     bool running = true;
-    struct FpsData
+    struct
     {
-        float fps = 60.f;
-        float timeElapsed = 0.f;
-    } fpsData;
+        int updateFrames = 60;
+        int renderFrames = 240;
+    } timeData;
+    GameObject* currentCamera;
+
 };
 
 #endif // GAME_H

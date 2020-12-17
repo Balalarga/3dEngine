@@ -57,10 +57,19 @@ OpenGLRenderer::OpenGLRenderer(std::string title, glm::ivec2 windowSize):
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    viewMatrix = glm::lookAt(glm::fvec3(0.0f, 0.0f, 2.5f),
+                             glm::fvec3(0.0f, 0.0f, 0.0f),
+                             glm::fvec3(0.0f, -1.0f, 0.0f)
+                             );
 }
 
 OpenGLRenderer::~OpenGLRenderer()
 {
+    for(auto i: descriptors){
+        glDeleteProgram(i.shaderProgram);
+        glDeleteVertexArrays(1, &i.vertexArrayObject);
+    }
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -71,9 +80,21 @@ void OpenGLRenderer::SwapBuffers() const
     SDL_GL_SwapWindow(window);
 }
 
-void OpenGLRenderer::Draw(const ObjectDescriptor& desc) const
+void OpenGLRenderer::UpdateViewMatrix(const glm::fmat4 view)
+{
+    viewMatrix = view;
+}
+
+void OpenGLRenderer::Draw(const ObjectDescriptor& desc, const glm::fmat4& modelMatrix) const
 {
     glUseProgram(desc.shaderProgram);
+    int uniform_model = glGetUniformLocation(desc.shaderProgram, "model");
+    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    int uniform_view = glGetUniformLocation(desc.shaderProgram, "view");
+    glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+    int uniform_color = glGetUniformLocation(desc.shaderProgram, "color");
+    glUniform3fv(uniform_color, 1, glm::value_ptr(desc.color));
     glBindVertexArray(desc.vertexArrayObject);
 
     GLenum mode = desc.drawType == DrawType::TRIANGLES ? GL_TRIANGLES : GL_QUADS;
@@ -113,9 +134,6 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-
-    unsigned shaderProgram;
-
     const char* vertexShaderSource;
     const char* fragmentShaderSource;
     if(!data.vertexShaderPath.empty())
@@ -136,68 +154,56 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
         fragmentShaderSource = FileSystem::ReadFile(data.fragmentShaderPath).c_str();
     else
     {
-        fragmentShaderSource = "#version 410\n"
-                               "out vec4 frag_colour;\n"
-                               "void main() {\n"
-                               "frag_colour = vec4(0.8, 0.8, 0.8, 1.0);\n"
-                               "}";
+        fragmentShaderSource = R"(
+                               #version 410
+                               uniform vec3 color;
+                               out vec4 frag_color;
+                               void main() {
+                               frag_color = vec4(color, 1.0);
+                               }
+                               )";
     }
 
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, 0);
-    glCompileShader(vertexShader);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, 0);
-    glCompileShader(fragmentShader);
+    unsigned shaderProgram = glCreateProgram();
+    bool ok = AddShader(shaderProgram, GL_VERTEX_SHADER, vertexShaderSource);
+    ok &= AddShader(shaderProgram, GL_FRAGMENT_SHADER, fragmentShaderSource);
+    if(!ok){
+        cout<<"Couldn't create shaders\n";
+        glDeleteProgram(shaderProgram);
+        return ObjectDescriptor();
+    }else
+        glLinkProgram(shaderProgram);
 
     ObjectDescriptor desc;
     desc.vertexCount = data.indices.size();
     desc.vertexArrayObject = vertexArrayObject;
     desc.drawType = data.drawType;
-    if(!checkShader(vertexShader) || !checkShader(fragmentShader)){
-        return desc;
-    }
-
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
     desc.shaderProgram = shaderProgram;
+    desc.color = data.color;
 
-    glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.2f),
-                                 glm::vec3(0.0f, 0.0f, 0.0f),
-                                 glm::vec3(0.0f, -1.0f, 0.0f)
-                                 );
-    glm::mat4 projection = glm::perspective(
-                60.f,
+    glm::fmat4 projection = glm::perspective(
+                80.f,
                 16/9.f,
-                0.1f, 10.0f);
+                0.1f, 100.0f);
 
     const char* uniform_name;
-    uniform_name = "model";
-    int uniform_model = glGetUniformLocation(desc.shaderProgram, uniform_name);
-    uniform_name = "view";
-    int uniform_view = glGetUniformLocation(desc.shaderProgram, uniform_name);
     uniform_name = "projection";
     int uniform_proj = glGetUniformLocation(desc.shaderProgram, uniform_name);
 
     glUseProgram(shaderProgram);
-    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
-    glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(uniform_proj, 1, GL_FALSE, glm::value_ptr(projection));
     glUseProgram(0);
 
     return desc;
 }
 
-void OpenGLRenderer::clearColorChanged()
+void OpenGLRenderer::ClearColorChanged()
 {
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
 }
 
 
-bool OpenGLRenderer::checkShader(GLint shader) const
+bool OpenGLRenderer::CheckShader(GLint shader) const
 {
     GLint isCompiled = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
@@ -217,5 +223,19 @@ bool OpenGLRenderer::checkShader(GLint shader) const
         glDeleteShader(shader);
         return false;
     }
+    return true;
+}
+
+bool OpenGLRenderer::AddShader(GLuint program, GLenum type, const char *source) const
+{
+    GLuint shader = glCreateShader(type);
+
+    glShaderSource(shader, 1, &source, 0);
+    glCompileShader(shader);
+    if(!CheckShader(shader)){
+        glDeleteShader(shader);
+        return false;
+    }
+    glAttachShader(program, shader);
     return true;
 }

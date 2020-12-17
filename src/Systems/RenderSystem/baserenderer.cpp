@@ -7,8 +7,13 @@ BaseRenderer::BaseRenderer(std::string title, glm::ivec2 windowSize):
 
 }
 
-void BaseRenderer::SetClearColor(glm::vec3 c)
+BaseRenderer::~BaseRenderer()
+{
+
+}
+
+void BaseRenderer::SetClearColor(glm::fvec3 c)
 {
     clearColor = c;
-    clearColorChanged();
+    ClearColorChanged();
 }

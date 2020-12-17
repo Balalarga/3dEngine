@@ -10,6 +10,6 @@ MeshComponent::MeshComponent(MeshData data)
 
 void MeshComponent::Draw()
 {
-    RenderSystem::Instance().GetRender()->Draw(descriptor);
+    RenderSystem::Instance().GetRender()->Draw(descriptor, parent->transform.GetModelMatrix());
 }
 

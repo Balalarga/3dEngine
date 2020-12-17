@@ -12,10 +12,11 @@ enum class DrawType{
 };
 
 struct MeshData{
-    std::vector<glm::vec3> verteces;
+    std::vector<glm::fvec3> verteces;
     std::vector<unsigned> indices;
     std::string vertexShaderPath;
     std::string fragmentShaderPath;
+    glm::fvec3 color = {1.f, 1.f, 1.f};
     DrawType drawType = DrawType::TRIANGLES;
 };
 
@@ -24,30 +25,31 @@ struct ObjectDescriptor{
     unsigned shaderProgram = 0;
     unsigned vertexCount = 0;
     DrawType drawType = DrawType::TRIANGLES;
+    glm::fvec3 color;
 };
 
 class BaseRenderer
 {
 
 public:
+    void SetClearColor(glm::fvec3 c);
     BaseRenderer(std::string title, glm::ivec2 windowSize);
-    virtual ~BaseRenderer()
-    {
 
-    }
-    virtual void SwapBuffers() const = 0;
-    virtual void Draw(const ObjectDescriptor& desc) const = 0;
+    virtual ~BaseRenderer();
     virtual void Clear() const = 0;
-    void SetClearColor(glm::vec3 c);
+    virtual void SwapBuffers() const = 0;
+    virtual void UpdateViewMatrix(const glm::fmat4 view) = 0;
+    virtual void Draw(const ObjectDescriptor& desc, const glm::fmat4 &modelMatrix) const = 0;
     virtual ObjectDescriptor CreateDescriptor(MeshData &data) const = 0;
+
 
 protected:
     std::string windowTitle;
     glm::vec2 windowSize;
-    glm::vec3 clearColor{0.f, 0.f, 0.f};
+    glm::fvec3 clearColor{0.f, 0.f, 0.f};
     std::list<ObjectDescriptor> descriptors;
 
-    virtual void clearColorChanged()
+    virtual void ClearColorChanged()
     {
 
     };

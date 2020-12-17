@@ -49,7 +49,7 @@ MeshData FileSystem::ReadObj(const string &filename)
         file >> token;
         if(token == "v")
         {
-            glm::vec3 vertex;
+            glm::fvec3 vertex;
             file >> vertex.x;
             file >> vertex.y;
             file >> vertex.z;
@@ -70,9 +70,7 @@ MeshData FileSystem::ReadObj(const string &filename)
                     idx = stoi(v.substr(0, del))-1;
                     meshData.indices.push_back(idx);
                 }
-                cout<<idx<<" ";
             }
-            cout<<endl;
         }
     }
     if(meshData.verteces.empty()){

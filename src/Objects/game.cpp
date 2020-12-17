@@ -1,17 +1,38 @@
 #include "game.h"
-#include "Components/physicscomponent.h"
-#include "Components/meshcomponent.h"
-#include "Systems/objectsystem.h"
 #include "Utils/utils.h"
 #include "Systems/systems.h"
+#include "Components/components.h"
 
 Game::Game()
 {
+    currentCamera = ObjectSystem::Instance().Add<GameObject>("mainCamera");
+    currentCamera->AddComponent<CameraComponent>();
+    currentCamera->AddComponent<PhysicsComponent>();
 }
 
 Game::~Game()
 {
     ObjectSystem::Instance().Clear();
+}
+
+void Game::OnTick()
+{
+
+}
+
+void Game::BeforeUpdate()
+{
+
+}
+
+void Game::AfterUpdate()
+{
+
+}
+
+void Game::BeforeDestroy()
+{
+
 }
 
 bool Game::IsRunning()
@@ -24,55 +45,66 @@ void Game::HandleEvents()
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
-        switch(event.type)
+        if(event.type == SDL_QUIT)
         {
-        case SDL_QUIT:
             running = false;
-            break;
-        case SDL_KEYDOWN:
-            switch(event.key.keysym.sym)
-            {
-            case SDLK_ESCAPE:
-                running = false;
-                break;
-            }
-            break;
-        case SDL_KEYUP:
-            switch(event.key.keysym.sym)
-            {
-            case SDLK_ESCAPE:
-                running = false;
-                break;
-            }
-            break;
+        }
+        else
+        {
+            InputSystem::Instance().HandleEvent(event);
         }
     }
 }
 
-void Game::Tick()
+void Game::Run()
 {
-    float frameTime = 1000.f/fpsData.fps;
-    float frameStart = SDL_GetTicks();
+    auto frameTime = 1000.f/timeData.renderFrames;
+    auto updateTime = 1000.f/timeData.updateFrames;
 
-    HandleEvents();
-    Update();
-    RenderSystem::Instance().GetRender()->Clear();
-    ObjectSystem::Instance().Draw();
-    RenderSystem::Instance().GetRender()->SwapBuffers();
-    fpsData.timeElapsed = SDL_GetTicks() - frameStart;
-    OnTick();
-    if(frameTime > fpsData.timeElapsed)
-    {
-        SDL_Delay(frameTime - fpsData.timeElapsed);
+    Uint32 prevTime = 0;
+    while(running){
+
+        Uint32 iterStart = SDL_GetTicks();
+        HandleEvents();
+
+        if(prevTime > 0 && prevTime <= updateTime)
+            Update(prevTime/1000.f);
+
+        Draw();
+
+        Uint32 iterEnd = SDL_GetTicks();
+        if(iterEnd < frameTime)
+        {
+            SDL_Delay(frameTime - iterEnd);
+        }
+        prevTime = SDL_GetTicks()-iterStart;
     }
 }
 
-void Game::Update(){
+void Game::Stop()
+{
+    running = false;
+}
+
+void Game::UpdateCamera()
+{
+    RenderSystem::Instance().GetRender()->
+            UpdateViewMatrix(currentCamera->
+                             GetComponent<CameraComponent>()->GetViewMatrix());
+}
+
+void Game::Draw()
+{
+    RenderSystem::Instance().GetRender()->Clear();
+    ObjectSystem::Instance().Draw();
+    RenderSystem::Instance().GetRender()->SwapBuffers();
+}
+
+void Game::Update(float dt)
+{
     BeforeUpdate();
 
-    ObjectSystem::Instance().Update(fpsData.timeElapsed/1000.f);
+    ObjectSystem::Instance().Update(dt);
 
     AfterUpdate();
 }
-
-
