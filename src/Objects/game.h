@@ -25,12 +25,11 @@ protected:
     void Update(float dt);
     void Draw();
 
-    glm::ivec2 windowSize = {640, 480};
     bool running = true;
     struct
     {
-        double updateFrames = 60.0;
-        double renderFrames = 120.0;
+        int updateFrames = 60;
+        int renderFrames = 240;
     } timeData;
     GameObject* currentCamera;
 
