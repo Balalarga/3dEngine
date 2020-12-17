@@ -50,32 +50,42 @@ public:
     void BeforeUpdate() override
     {
         auto cameraPhysics = currentCamera->GetComponent<PhysicsComponent>();
+        bool cameraMoved = false;
         if(InputSystem::Instance().isKeyPressed(Key::A))
         {
             cameraPhysics->SetVelocity({1, 0, 0}, -10);
+            cameraMoved = true;
         }
         else if(InputSystem::Instance().isKeyPressed(Key::D))
         {
             cameraPhysics->SetVelocity({1, 0, 0}, 10);
+            cameraMoved = true;
         }
         else
         {
             cameraPhysics->ResetVelocity({1, 0, 0});
+            cameraMoved = true;
         }
 
         if(InputSystem::Instance().isKeyPressed(Key::W))
         {
             cameraPhysics->SetVelocity({0, 1, 0}, 10);
+            cameraMoved = true;
         }
         else if(InputSystem::Instance().isKeyPressed(Key::S))
         {
             cameraPhysics->SetVelocity({0, 1, 0}, -10);
+            cameraMoved = true;
         }
         else
         {
             cameraPhysics->ResetVelocity({0, 1, 0});
+            cameraMoved = true;
         }
-        UpdateCamera();
+        if(InputSystem::Instance().isKeyPressed(Key::ESCAPE))
+            Stop();
+        if(cameraMoved)
+            UpdateCamera();
     }
     void AfterUpdate() override
     {

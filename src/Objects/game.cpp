@@ -81,6 +81,11 @@ void Game::Run()
     }
 }
 
+void Game::Stop()
+{
+    running = false;
+}
+
 void Game::UpdateCamera()
 {
     RenderSystem::Instance().GetRender()->

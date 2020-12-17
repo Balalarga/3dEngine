@@ -11,6 +11,7 @@ class Game
 public:
     Game();
     void Run();
+    void Stop();
     void UpdateCamera();
     bool IsRunning();
 
