@@ -11,7 +11,8 @@ using std::vector;
 class MeshComponent: public Component
 {
 public:
-    MeshComponent(MeshData data);
+    MeshComponent(MeshData &data);
+    ~MeshComponent();
     void Draw() override;
 
     vector<glm::fvec3> verteces;

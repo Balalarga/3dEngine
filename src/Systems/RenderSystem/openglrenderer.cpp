@@ -1,6 +1,7 @@
 #include "openglrenderer.h"
 #include "Systems/FileSystem/filesystem.h"
 #include "Utils/utils.h"
+#include "Shader/openglshader.h"
 
 OpenGLRenderer::OpenGLRenderer(std::string title, glm::ivec2 windowSize):
     BaseRenderer(title, windowSize)
@@ -66,10 +67,6 @@ OpenGLRenderer::OpenGLRenderer(std::string title, glm::ivec2 windowSize):
 
 OpenGLRenderer::~OpenGLRenderer()
 {
-    for(auto i: descriptors){
-        glDeleteProgram(i.shaderProgram);
-        glDeleteVertexArrays(1, &i.vertexArrayObject);
-    }
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
@@ -87,22 +84,19 @@ void OpenGLRenderer::UpdateViewMatrix(const glm::fmat4 view)
 
 void OpenGLRenderer::Draw(const ObjectDescriptor& desc, const glm::fmat4& modelMatrix) const
 {
-    glUseProgram(desc.shaderProgram);
-    int uniform_model = glGetUniformLocation(desc.shaderProgram, "model");
-    glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(modelMatrix));
-    int uniform_view = glGetUniformLocation(desc.shaderProgram, "view");
-    glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+    desc.shader->SetMat4("model", modelMatrix);
+    desc.shader->SetMat4("view", viewMatrix);
+    desc.shader->SetVec3("color", desc.color);
 
-    int uniform_color = glGetUniformLocation(desc.shaderProgram, "color");
-    glUniform3fv(uniform_color, 1, glm::value_ptr(desc.color));
+    desc.shader->Bind();
     glBindVertexArray(desc.vertexArrayObject);
 
     GLenum mode = desc.drawType == DrawType::TRIANGLES ? GL_TRIANGLES : GL_QUADS;
 
     glDrawElements(mode, desc.vertexCount, GL_UNSIGNED_INT, 0);
 
-    glUseProgram(0);
     glBindVertexArray(0);
+    desc.shader->Unbind();
 }
 
 void OpenGLRenderer::Clear() const
@@ -134,8 +128,8 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-    const char* vertexShaderSource;
-    const char* fragmentShaderSource;
+    std::string vertexShaderSource;
+    std::string fragmentShaderSource;
     if(!data.vertexShaderPath.empty())
         vertexShaderSource = FileSystem::ReadFile(data.vertexShaderPath).c_str();
     else
@@ -164,78 +158,34 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
                                )";
     }
 
-    unsigned shaderProgram = glCreateProgram();
-    bool ok = AddShader(shaderProgram, GL_VERTEX_SHADER, vertexShaderSource);
-    ok &= AddShader(shaderProgram, GL_FRAGMENT_SHADER, fragmentShaderSource);
-    if(!ok){
-        cout<<"Couldn't create shaders\n";
-        glDeleteProgram(shaderProgram);
-        return ObjectDescriptor();
-    }else
-        glLinkProgram(shaderProgram);
-
     ObjectDescriptor desc;
     desc.vertexCount = data.indices.size();
     desc.vertexArrayObject = vertexArrayObject;
     desc.drawType = data.drawType;
-    desc.shaderProgram = shaderProgram;
     desc.color = data.color;
+    desc.shader = new OpenglShader({{ShaderType::Vertex, vertexShaderSource},
+                                    {ShaderType::Fragment, fragmentShaderSource}});
 
     glm::fmat4 projection = glm::perspective(
                 80.f,
                 16/9.f,
                 0.1f, 100.0f);
 
-    const char* uniform_name;
-    uniform_name = "projection";
-    int uniform_proj = glGetUniformLocation(desc.shaderProgram, uniform_name);
 
-    glUseProgram(shaderProgram);
-    glUniformMatrix4fv(uniform_proj, 1, GL_FALSE, glm::value_ptr(projection));
-    glUseProgram(0);
+    desc.shader->SetMat4("projection", projection);
 
     return desc;
+}
+
+void OpenGLRenderer::DeleteDescriptor(const ObjectDescriptor &desc) const
+{
+    glDeleteProgram(desc.shader->GetId());
+    glDeleteVertexArrays(1, &desc.vertexArrayObject);
+
+    delete desc.shader;
 }
 
 void OpenGLRenderer::ClearColorChanged()
 {
     glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
-}
-
-
-bool OpenGLRenderer::CheckShader(GLint shader) const
-{
-    GLint isCompiled = 0;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
-    if(isCompiled == GL_FALSE)
-    {
-        GLint maxLength = 0;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
-
-        std::vector<GLchar> errorLog(maxLength);
-        glGetShaderInfoLog(shader, maxLength, &maxLength, &errorLog[0]);
-        for(auto i: errorLog)
-        {
-            cout<<i;
-        }
-        cout<<endl;
-
-        glDeleteShader(shader);
-        return false;
-    }
-    return true;
-}
-
-bool OpenGLRenderer::AddShader(GLuint program, GLenum type, const char *source) const
-{
-    GLuint shader = glCreateShader(type);
-
-    glShaderSource(shader, 1, &source, 0);
-    glCompileShader(shader);
-    if(!CheckShader(shader)){
-        glDeleteShader(shader);
-        return false;
-    }
-    glAttachShader(program, shader);
-    return true;
 }
