@@ -28,6 +28,7 @@ SOURCES += \
         src/Systems/RenderSystem/baserenderer.cpp \
         src/Systems/RenderSystem/openglrenderer.cpp \
         src/Systems/InputSystem/inputsystem.cpp \
+        src/Systems/RenderSystem/Shader/openglshader.cpp \
         src/Systems/objectsystem.cpp \
         src/Systems/RenderSystem/rendersystem.cpp \
         src/Utils/utils.cpp
@@ -46,8 +47,10 @@ HEADERS += \
         src/Systems/FileSystem/filesystem.h \
         src/Systems/InputSystem/keycodes.h \
         src/Systems/RenderSystem/baserenderer.h \
+        src/Systems/RenderSystem/Shader/baseshader.h \
         src/Systems/RenderSystem/openglrenderer.h \
         src/Systems/InputSystem/inputsystem.h \
+        src/Systems/RenderSystem/Shader/openglshader.h \
         src/Systems/objectsystem.h \
         src/Systems/RenderSystem/rendersystem.h \
         src/Systems/systems.h \

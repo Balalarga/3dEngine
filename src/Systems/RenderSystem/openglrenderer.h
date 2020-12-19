@@ -16,11 +16,11 @@ public:
     void Draw(const ObjectDescriptor& desc, const glm::fmat4 &modelMatrix) const override;
 
     ObjectDescriptor CreateDescriptor(MeshData &data) const override;
+    void DeleteDescriptor(const ObjectDescriptor& desc) const override;
+
 
 protected:
     void ClearColorChanged() override;
-    bool CheckShader(GLint shader) const;
-    bool AddShader(GLuint program, GLenum type, const char* source) const;
 
 private:
     SDL_Window* window;
