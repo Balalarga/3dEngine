@@ -18,17 +18,15 @@ void InputSystem::HandleEvent(SDL_Event &event)
 {
     if(event.type == SDL_KEYDOWN)
     {
-        Button& b = keyboard[event.key.keysym.sym];
+        Button& b = keyboard[event.key.keysym.scancode];
         if(b.state == Button::State::Pressed)
-        {
             b.state = Button::State::Repeated;
-        }
         else
             b.state = Button::State::Pressed;
     }
     else if (event.type == SDL_KEYUP)
     {
-        Button& b = keyboard[event.key.keysym.sym];
+        Button& b = keyboard[event.key.keysym.scancode];
         b.state = Button::State::Released;
     }
     else if (event.type == SDL_MOUSEBUTTONDOWN)
@@ -40,9 +38,7 @@ void InputSystem::HandleEvent(SDL_Event &event)
     {
         Button& b = mouse[event.button.button];
         if(b.state == Button::State::Pressed)
-        {
             b.state = Button::State::Repeated;
-        }
         else
             b.state = Button::State::Pressed;
     }
