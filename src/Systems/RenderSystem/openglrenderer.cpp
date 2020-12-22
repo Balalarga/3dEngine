@@ -20,7 +20,7 @@ OpenGLRenderer::OpenGLRenderer(std::string title, glm::ivec2 windowSize):
         windowFlags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    //    SDL_SetRelativeMouseMode(SDL_TRUE);
+    //SDL_SetRelativeMouseMode(SDL_TRUE);
 
     window = SDL_CreateWindow(windowTitle.c_str(),
                               SDL_WINDOWPOS_CENTERED,

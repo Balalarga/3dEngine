@@ -6,19 +6,31 @@
 #include "Systems/RenderSystem/baserenderer.h"
 #include <vector>
 
+struct GameConfig
+{
+    enum class RenderType{
+        OpenGL,
+        DirectX11,
+        DirectX12,
+        Vulkan
+    } renderType;
+    std::string title;
+    glm::ivec2 windowSize;
+    glm::fvec3 clearColor = {.1f, .1f, .1f};
+};
+
 class Game
 {
 public:
-    Game();
+    Game(const GameConfig& config);
     void Run();
     void Stop();
     void UpdateCamera();
     bool IsRunning();
 
     virtual ~Game();
-    virtual void OnTick();
-    virtual void BeforeUpdate();
-    virtual void AfterUpdate();
+    virtual void FrameUpdate();
+    virtual void FixedUpdate(float dt);
     virtual void BeforeDestroy();
 
 protected:

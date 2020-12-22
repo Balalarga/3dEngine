@@ -1,4 +1,6 @@
 #include "inputsystem.h"
+#include <SDL2/SDL.h>
+#include "Utils/utils.h"
 
 InputSystem* InputSystem::selfInstance = nullptr;
 
@@ -16,60 +18,65 @@ InputSystem &InputSystem::Instance()
 
 void InputSystem::HandleEvent(SDL_Event &event)
 {
+    mouse.delta.x = 0;
+    mouse.delta.y = 0;
+
+    auto& b = keys[event.key.keysym.scancode];
     if(event.type == SDL_KEYDOWN)
     {
-        Button& b = keyboard[event.key.keysym.scancode];
-        if(b.state == Button::State::Pressed)
-            b.state = Button::State::Repeated;
+        if(b.pressed)
+            b.repeated = true;
         else
-            b.state = Button::State::Pressed;
+            b.pressed = true;
     }
     else if (event.type == SDL_KEYUP)
     {
-        Button& b = keyboard[event.key.keysym.scancode];
-        b.state = Button::State::Released;
+        b.pressed = false;
+        b.repeated = false;
     }
     else if (event.type == SDL_MOUSEBUTTONDOWN)
     {
-        Button& b = mouse[event.button.button];
-        b.state = Button::State::Released;
+        mouse.buttons[event.button.button] = true;
     }
     else if (event.type == SDL_MOUSEBUTTONUP)
     {
-        Button& b = mouse[event.button.button];
-        if(b.state == Button::State::Pressed)
-            b.state = Button::State::Repeated;
-        else
-            b.state = Button::State::Pressed;
+        mouse.buttons[event.button.button] = false;
     }
     else if (event.type == SDL_MOUSEWHEEL)
     {
-
+        mouse.wheel.x = event.wheel.x;
+        mouse.wheel.y = event.wheel.y;
     }
     else if (event.type == SDL_MOUSEMOTION)
     {
-
+        mouse.delta.x = event.motion.xrel;
+        mouse.delta.y = event.motion.yrel;
+        mouse.position.x = event.motion.x;
+        mouse.position.y = event.motion.y;
     }
 }
 
-bool InputSystem::isModPressed(Mode mod)
+glm::fvec2 InputSystem::GetMousePos()
 {
-    return modifires[static_cast<int>(mod)].state == Button::State::Pressed;
+    return mouse.position;
 }
 
-bool InputSystem::isMousePressed(Mouse button)
+bool InputSystem::IsModPressed(Mode mod)
 {
-    return mouse[static_cast<int>(button)].state == Button::State::Pressed ||
-            mouse[static_cast<int>(button)].state == Button::State::Repeated;
+    return modes[int(mod)];
 }
 
-bool InputSystem::isKeyPressed(Key key)
+bool InputSystem::IsMousePressed(Mouse button)
 {
-    return keyboard[static_cast<int>(key)].state == Button::State::Pressed ||
-            keyboard[static_cast<int>(key)].state == Button::State::Repeated;
+    return mouse.buttons[int(button)];
 }
 
-bool InputSystem::isKeyRepeated(Key key)
+bool InputSystem::IsKeyPressed(Key key)
 {
-    return keyboard[static_cast<int>(key)].state == Button::State::Repeated;
+    return keys[int(key)].pressed;
+}
+
+bool InputSystem::IsKeyRepeated(Key key)
+{
+    return keys[int(key)].repeated;
 }

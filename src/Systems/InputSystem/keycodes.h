@@ -251,11 +251,6 @@ enum class Key{
 };
 
 enum class Mode{
-#define CTRL   (LCTRL|RCTRL)
-#define SHIFT  (LSHIFT|RSHIFT)
-#define ALT    (LALT|RALT)
-#define GUI    (LGUI|RGUI)
-
     NONE = KMOD_NONE,
     LSHIFT = KMOD_LSHIFT,
     RSHIFT = KMOD_RSHIFT,
@@ -269,6 +264,10 @@ enum class Mode{
     CAPS = KMOD_CAPS,
     MODE = KMOD_MODE,
     RESERVED = KMOD_RESERVED,
+    CTRL = LCTRL|RCTRL,
+    SHIFT = LSHIFT|RSHIFT,
+    ALT = LALT|RALT,
+    GUI = LGUI|RGUI,
 
     SIZE_OF_ENUM
 };

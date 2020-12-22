@@ -4,11 +4,16 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    GameConfig config;
+    config.renderType = GameConfig::RenderType::OpenGL;
+    config.title = "Sandbox game";
+    config.windowSize = {1200, 800};
+
 
     SandboxGame* game;
     try
     {
-        game = new SandboxGame();
+        game = new SandboxGame(config);
     }
     catch (const string& error)
     {

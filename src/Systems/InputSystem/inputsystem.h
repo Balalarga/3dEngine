@@ -2,34 +2,38 @@
 #define INPUTSYSTEM_H
 
 #include "keycodes.h"
+#include <glm/glm.hpp>
 
+struct KeyState{
+    bool pressed = false;
+    bool repeated = false;
+};
 
 class InputSystem
 {
-struct Button{
-    enum class State{
-        Released,
-        Pressed,
-        Repeated
-    } state;
-};
 
 public:
     static InputSystem& Instance();
 
     void HandleEvent(SDL_Event& event);
-    bool isKeyPressed(Key key);
-    bool isKeyRepeated(Key key);
-    bool isModPressed(Mode mod);
-    bool isMousePressed(Mouse button);
+    bool IsKeyPressed(Key key);
+    bool IsKeyRepeated(Key key);
+    bool IsModPressed(Mode mod);
+    bool IsMousePressed(Mouse button);
+    glm::fvec2 GetMousePos();
 
-private:
+protected:
     InputSystem();
     static InputSystem* selfInstance;
 
-    Button keyboard[static_cast<int>(Key::SIZE_OF_ENUM)];
-    Button modifires[static_cast<int>(Mode::SIZE_OF_ENUM)];
-    Button mouse[static_cast<int>(Mouse::SIZE_OF_ENUM)];
+    KeyState keys[int(Key::SIZE_OF_ENUM)];
+    bool modes[int(Mode::SIZE_OF_ENUM)];
+    struct MouseData{
+        glm::ivec2 wheel = {0, 0};
+        glm::ivec2 position = {0, 0};
+        glm::ivec2 delta = {0, 0};
+        bool buttons[int(Mouse::SIZE_OF_ENUM)];
+    } mouse;
 };
 
 #endif // INPUTSYSTEM_H

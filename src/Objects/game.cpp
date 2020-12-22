@@ -3,11 +3,18 @@
 #include "Systems/systems.h"
 #include "Components/components.h"
 
-Game::Game()
+Game::Game(const GameConfig& config)
 {
+    if(config.renderType == GameConfig::RenderType::OpenGL)
+        RenderSystem::Instance().
+                CreateRenderer<OpenGLRenderer>
+                (config.title, config.windowSize);
+    RenderSystem::Instance().GetRender()->SetClearColor(config.clearColor);
+
     currentCamera = ObjectSystem::Instance().Add<GameObject>("mainCamera");
     currentCamera->AddComponent<CameraComponent>();
     currentCamera->AddComponent<PhysicsComponent>();
+    currentCamera->transform.Move({0.f, 0.f, 5.f});
 }
 
 Game::~Game()
@@ -15,17 +22,12 @@ Game::~Game()
     ObjectSystem::Instance().Clear();
 }
 
-void Game::OnTick()
+void Game::FrameUpdate()
 {
 
 }
 
-void Game::BeforeUpdate()
-{
-
-}
-
-void Game::AfterUpdate()
+void Game::FixedUpdate(float dt)
 {
 
 }
@@ -71,7 +73,7 @@ void Game::Run()
             Update(prevTime/1000.f);
 
         Draw();
-
+        FrameUpdate();
         Uint32 iterEnd = SDL_GetTicks();
         if(iterEnd < frameTime)
         {
@@ -102,9 +104,6 @@ void Game::Draw()
 
 void Game::Update(float dt)
 {
-    BeforeUpdate();
-
     ObjectSystem::Instance().Update(dt);
-
-    AfterUpdate();
+    FixedUpdate(dt);
 }
