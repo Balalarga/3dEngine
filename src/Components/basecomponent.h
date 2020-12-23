@@ -14,11 +14,11 @@ public:
     {
 
     }
-    virtual void Update(float dt)
+    virtual void FixedUpdate(float dt)
     {
 
     }
-    virtual void Draw()
+    virtual void FrameUpdate()
     {
 
     }

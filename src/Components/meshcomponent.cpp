@@ -13,8 +13,8 @@ MeshComponent::~MeshComponent()
     RenderSystem::Instance().GetRender()->DeleteDescriptor(descriptor);
 }
 
-void MeshComponent::Draw()
+void MeshComponent::FrameUpdate()
 {
-    RenderSystem::Instance().GetRender()->Draw(descriptor, parent->transform.GetModelMatrix());
+    RenderSystem::Instance().GetRender()->FrameUpdate(descriptor, parent->transform.GetModelMatrix());
 }
 

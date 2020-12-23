@@ -34,12 +34,12 @@ public:
         bool cameraMoved = false;
         if(InputSystem::Instance().IsKeyPressed(Key::A))
         {
-            cameraPhysics->SetVelocity({1, 0, 0}, -1);
+            cameraPhysics->SetVelocity({1, 0, 0}, -5);
             cameraMoved = true;
         }
         else if(InputSystem::Instance().IsKeyPressed(Key::D))
         {
-            cameraPhysics->SetVelocity({1, 0, 0}, 1);
+            cameraPhysics->SetVelocity({1, 0, 0}, 5);
             cameraMoved = true;
         }
         else
@@ -50,12 +50,12 @@ public:
 
         if(InputSystem::Instance().IsKeyPressed(Key::W))
         {
-            cameraPhysics->SetVelocity({0, 1, 0}, 1);
+            cameraPhysics->SetVelocity({0, 1, 0}, 5);
             cameraMoved = true;
         }
         else if(InputSystem::Instance().IsKeyPressed(Key::S))
         {
-            cameraPhysics->SetVelocity({0, 1, 0}, -1);
+            cameraPhysics->SetVelocity({0, 1, 0}, -5);
             cameraMoved = true;
         }
         else

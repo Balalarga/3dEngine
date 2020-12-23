@@ -18,11 +18,11 @@ vector<string> FileSystem::Split(const std::string& s, char delimiter)
    return tokens;
 }
 
-std::string FileSystem::ReadFile(const std::string &filename)
+std::string FileSystem::ReadFile(const std::string &filepath)
 {
-    ifstream file(filename);
+    ifstream file(filepath);
     if(!file){
-        cout<<"Unable to load "<<filename<<" file"<<endl;
+        cout<<"Unable to load "<<filepath<<" file"<<endl;
         return "";
     }
     stringstream fileData;
@@ -33,13 +33,13 @@ std::string FileSystem::ReadFile(const std::string &filename)
     return fileData.str();
 }
 
-MeshData FileSystem::ReadObj(const string &filename)
+MeshData FileSystem::ReadObj(const string &filepath)
 {
     MeshData meshData;
-    ifstream file(filename);
+    ifstream file(filepath);
     if(!file)
     {
-        cout<<"Unable to load "<<filename<<" file"<<endl;
+        cout<<"Unable to load "<<filepath<<" file"<<endl;
         return meshData;
     }
 
@@ -81,36 +81,29 @@ MeshData FileSystem::ReadObj(const string &filename)
     return meshData;
 }
 
-MeshData FileSystem::ReadStl(const string &filename)
+MeshData FileSystem::ReadStl(const string &filepath)
 {
     MeshData meshData;
-    ifstream file(filename);
+    ifstream file(filepath);
     if(!file)
     {
-        cout<<"Unable to load "<<filename<<" file"<<endl;
+        cout<<"Unable to load "<<filepath<<" file"<<endl;
         return meshData;
     }
-    if(StlFileHasASCIIFormat(filename)){
+    stringstream src;
+    while(!file.eof())
+        src << file.rdbuf();
+
+    if(StlFileHasASCIIFormat(src.str()))
         cout<<"Non ascii format\n";
-    }
 
     file.close();
-
     return meshData;
 }
 
-bool FileSystem::StlFileHasASCIIFormat(const std::string& filename)
+bool FileSystem::StlFileHasASCIIFormat(const std::string& src)
 {
-    using namespace std;
-    ifstream in(filename);
-    if(!in)
-    {
-        cout<<"Couldnt open file " << filename<<endl;
-    }
-
-    char chars [256];
-    in.read (chars, 256);
-    string buffer (chars, in.gcount());
+    string buffer (src.substr(256));
     transform(buffer.begin(), buffer.end(), buffer.begin(), ::tolower);
     return buffer.find ("solid") != string::npos &&
             buffer.find ("\n") != string::npos &&

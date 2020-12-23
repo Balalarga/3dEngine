@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <list>
 #include <vector>
-#include "Shader/baseshader.h"
+#include "baseshader.h"
 
 enum class DrawType{
     TRIANGLES,
@@ -41,7 +41,7 @@ public:
     virtual void Clear() const = 0;
     virtual void SwapBuffers() const = 0;
     virtual void UpdateViewMatrix(const glm::fmat4 view) = 0;
-    virtual void Draw(const ObjectDescriptor& desc, const glm::fmat4 &modelMatrix) const = 0;
+    virtual void FrameUpdate(const ObjectDescriptor& desc, const glm::fmat4 &modelMatrix) const = 0;
     virtual ObjectDescriptor CreateDescriptor(MeshData &data) const = 0;
     virtual void DeleteDescriptor(const ObjectDescriptor& desc) const = 0;
 

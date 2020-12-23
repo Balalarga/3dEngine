@@ -35,17 +35,17 @@ GameObject *ObjectSystem::Get(std::string name)
     return nullptr;
 }
 
-void ObjectSystem::Draw()
+void ObjectSystem::FrameUpdate()
 {
     for(auto i: objects)
-        i.second->Draw();
+        i.second->FrameUpdate();
 }
 
-void ObjectSystem::Update(double dt)
+void ObjectSystem::FixedUpdate(double dt)
 {
     for(auto i: objects)
     {
-        i.second->Update(dt);
+        i.second->FixedUpdate(dt);
     }
 }
 

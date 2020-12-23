@@ -13,7 +13,7 @@ class MeshComponent: public Component
 public:
     MeshComponent(MeshData &data);
     ~MeshComponent();
-    void Draw() override;
+    void FrameUpdate() override;
 
     vector<glm::fvec3> verteces;
     ObjectDescriptor descriptor;

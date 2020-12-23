@@ -1,0 +1,13 @@
+{
+    "shaders":
+    {
+        "base":
+        {
+            "opengl":
+            {
+                "vertex"   : "../src/RenderSystem/OpenGL/base.vert",
+                "fragment" : "../src/RenderSystem/OpenGL/base.frag"
+            }
+        }
+    }
+}

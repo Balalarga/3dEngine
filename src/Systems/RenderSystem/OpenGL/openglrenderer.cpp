@@ -1,7 +1,7 @@
 #include "openglrenderer.h"
 #include "Systems/FileSystem/filesystem.h"
 #include "Utils/utils.h"
-#include "Shader/openglshader.h"
+#include "openglshader.h"
 
 OpenGLRenderer::OpenGLRenderer(std::string title, glm::ivec2 windowSize):
     BaseRenderer(title, windowSize)
@@ -82,7 +82,7 @@ void OpenGLRenderer::UpdateViewMatrix(const glm::fmat4 view)
     viewMatrix = view;
 }
 
-void OpenGLRenderer::Draw(const ObjectDescriptor& desc, const glm::fmat4& modelMatrix) const
+void OpenGLRenderer::FrameUpdate(const ObjectDescriptor& desc, const glm::fmat4& modelMatrix) const
 {
     desc.shader->SetMat4("model", modelMatrix);
     desc.shader->SetMat4("view", viewMatrix);
@@ -134,14 +134,20 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
         vertexShaderSource = FileSystem::ReadFile(data.vertexShaderPath).c_str();
     else
     {
-        vertexShaderSource = "#version 410\n"
-                             "uniform mat4 view;\n"
-                             "uniform mat4 model;\n"
-                             "uniform mat4 projection;\n"
-                             "in vec3 vp;\n"
-                             "void main() {\n"
-                             "gl_Position = projection * view * model * vec4(vp, 1.0);\n"
-                             "}";
+        vertexShaderSource = R"(
+                             #version 410
+
+                             layout (location = 0) in vec3 pos;
+                             layout (location = 1) in vec3 normal;
+
+                             uniform mat4 view;
+                             uniform mat4 model;
+                             uniform mat4 projection;
+
+                             void main() {
+                                gl_Position = projection * view * model * vec4(pos, 1.0f);
+                             }
+                             )";
     }
 
     if(!data.fragmentShaderPath.empty())
@@ -150,10 +156,15 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     {
         fragmentShaderSource = R"(
                                #version 410
+
+                               in vec3 fragPos;
+
                                uniform vec3 color;
+
                                out vec4 frag_color;
+
                                void main() {
-                               frag_color = vec4(color, 1.0);
+                                    frag_color = vec4(color, 1.0);
                                }
                                )";
     }

@@ -2,7 +2,7 @@
 #define RENDERSYSTEM_H
 
 #include "baserenderer.h"
-#include "openglrenderer.h"
+#include "OpenGL/openglrenderer.h"
 #include <memory>
 
 class RenderSystem

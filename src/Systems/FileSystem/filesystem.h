@@ -7,12 +7,12 @@ class FileSystem
 {
 public:
     FileSystem() = delete;
-    static std::string ReadFile(const std::string& filename);
-    static MeshData ReadObj(const std::string& filename);
-    static MeshData ReadStl(const std::string& filename);
+    static std::string ReadFile(const std::string& filepath);
+    static MeshData ReadObj(const std::string& filepath);
+    static MeshData ReadStl(const std::string& filepath);
 
 private:
-    static bool StlFileHasASCIIFormat(const std::string& filename);
+    static bool StlFileHasASCIIFormat(const std::string& src);
     static std::vector<std::string> Split(const std::string &s, char delimiter);
 };
 

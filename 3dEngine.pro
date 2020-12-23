@@ -26,9 +26,10 @@ SOURCES += \
         src/Objects/game.cpp \
         src/Systems/FileSystem/filesystem.cpp \
         src/Systems/RenderSystem/baserenderer.cpp \
-        src/Systems/RenderSystem/openglrenderer.cpp \
+        src/Systems/RenderSystem/OpenGL/openglrenderer.cpp \
         src/Systems/InputSystem/inputsystem.cpp \
-        src/Systems/RenderSystem/Shader/openglshader.cpp \
+        src/Systems/RenderSystem/OpenGL/openglshader.cpp \
+        src/Systems/configsystem.cpp \
         src/Systems/objectsystem.cpp \
         src/Systems/RenderSystem/rendersystem.cpp \
         src/Utils/utils.cpp
@@ -47,10 +48,11 @@ HEADERS += \
         src/Systems/FileSystem/filesystem.h \
         src/Systems/InputSystem/keycodes.h \
         src/Systems/RenderSystem/baserenderer.h \
-        src/Systems/RenderSystem/Shader/baseshader.h \
-        src/Systems/RenderSystem/openglrenderer.h \
+        src/Systems/RenderSystem/baseshader.h \
+        src/Systems/RenderSystem/OpenGL/openglrenderer.h \
         src/Systems/InputSystem/inputsystem.h \
-        src/Systems/RenderSystem/Shader/openglshader.h \
+        src/Systems/RenderSystem/OpenGL/openglshader.h \
+        src/Systems/configsystem.h \
         src/Systems/objectsystem.h \
         src/Systems/RenderSystem/rendersystem.h \
         src/Systems/systems.h \
@@ -58,4 +60,7 @@ HEADERS += \
         src/glIncludes.h \
         src/Utils/utils.h
 
-DISTFILES +=
+DISTFILES += \
+    config/baseconfig.json \
+    src/Systems/RenderSystem/OpenGL/Shaders/base.frag \
+    src/Systems/RenderSystem/OpenGL/Shaders/base.vert

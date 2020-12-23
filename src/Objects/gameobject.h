@@ -10,8 +10,8 @@ class GameObject
 {
 public:
     virtual ~GameObject();
-    virtual void Update(float dt);
-    virtual void Draw();
+    virtual void FixedUpdate(float dt);
+    virtual void FrameUpdate();
 
     template<typename T, typename... TArgs>
     T* AddComponent(TArgs&&... args)

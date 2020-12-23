@@ -32,7 +32,7 @@ void Game::FixedUpdate(float dt)
 
 }
 
-void Game::BeforeDestroy()
+void Game::Destroy()
 {
 
 }
@@ -60,8 +60,8 @@ void Game::HandleEvents()
 
 void Game::Run()
 {
-    auto frameTime = 1000.f/timeData.renderFrames;
-    auto updateTime = 1000.f/timeData.updateFrames;
+    auto frameTime = 1000.f/frameData.renderFrames;
+    auto updateTime = 1000.f/frameData.updateFrames;
 
     Uint32 prevTime = 0;
     while(running){
@@ -70,10 +70,12 @@ void Game::Run()
         HandleEvents();
 
         if(prevTime > 0 && prevTime <= updateTime)
-            Update(prevTime/1000.f);
+        {
+            SystemFixedUpdate(prevTime/1000.f);
+            FixedUpdate(prevTime/1000.f);
+        }
+        SystemFrameUpdate();
 
-        Draw();
-        FrameUpdate();
         Uint32 iterEnd = SDL_GetTicks();
         if(iterEnd < frameTime)
         {
@@ -95,15 +97,14 @@ void Game::UpdateCamera()
                              GetComponent<CameraComponent>()->GetViewMatrix());
 }
 
-void Game::Draw()
+void Game::SystemFrameUpdate()
 {
     RenderSystem::Instance().GetRender()->Clear();
-    ObjectSystem::Instance().Draw();
+    ObjectSystem::Instance().FrameUpdate();
     RenderSystem::Instance().GetRender()->SwapBuffers();
 }
 
-void Game::Update(float dt)
+void Game::SystemFixedUpdate(float dt)
 {
-    ObjectSystem::Instance().Update(dt);
-    FixedUpdate(dt);
+    ObjectSystem::Instance().FixedUpdate(dt);
 }

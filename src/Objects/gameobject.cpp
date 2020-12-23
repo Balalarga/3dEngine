@@ -9,16 +9,16 @@ GameObject::~GameObject()
     }
 };
 
-void GameObject::Update(float dt)
+void GameObject::FixedUpdate(float dt)
 {
     for(auto& pair: components)
     {
-        pair.second->Update(dt);
+        pair.second->FixedUpdate(dt);
     }
 };
 
-void GameObject::Draw()
+void GameObject::FrameUpdate()
 {
     for(auto& pair: components)
-        pair.second->Draw();
+        pair.second->FrameUpdate();
 };

@@ -34,8 +34,8 @@ public:
         GameObject* obj = Get(name);
         return dynamic_cast<T*>(obj);
     }
-    void Draw();
-    void Update(double dt);
+    void FrameUpdate();
+    void FixedUpdate(double dt);
 
 
 private:

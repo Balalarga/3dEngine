@@ -1,7 +1,7 @@
 #ifndef OPENGLSHADER_H
 #define OPENGLSHADER_H
 
-#include "baseshader.h"
+#include "../baseshader.h"
 #include <map>
 
 class OpenglShader: public BaseShader
