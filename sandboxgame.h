@@ -17,14 +17,14 @@ public:
     SandboxGame(const GameConfig& config):
         Game(config)
     {
+        auto mesh = FileSystem::ReadObj("../data/cube.obj");
         auto object = ObjectSystem::Instance().Add<GameObject>("object1");
-        auto mesh1 = FileSystem::ReadObj("../data/cube.obj");
-        object->AddComponent<MeshComponent>(mesh1);
+        object->AddComponent<MeshComponent>(mesh);
         object->transform.Move({-4, 0, 0});
 
         auto object2 = ObjectSystem::Instance().Add<GameObject>("object2");
-        mesh1.color = {1.f, 0.f, 1.f};
-        object2->AddComponent<MeshComponent>(mesh1);
+        mesh.color = {1.f, 0.f, 1.f};
+        object2->AddComponent<MeshComponent>(mesh);
         object->transform.Move({4, 0, 0});
     }
 
@@ -34,12 +34,12 @@ public:
         bool cameraMoved = false;
         if(InputSystem::Instance().IsKeyPressed(Key::A))
         {
-            cameraPhysics->SetVelocity({1, 0, 0}, -5);
+            cameraPhysics->SetVelocity({1, 0, 0}, -cameraSpeed);
             cameraMoved = true;
         }
         else if(InputSystem::Instance().IsKeyPressed(Key::D))
         {
-            cameraPhysics->SetVelocity({1, 0, 0}, 5);
+            cameraPhysics->SetVelocity({1, 0, 0}, cameraSpeed);
             cameraMoved = true;
         }
         else
@@ -50,12 +50,38 @@ public:
 
         if(InputSystem::Instance().IsKeyPressed(Key::W))
         {
-            cameraPhysics->SetVelocity({0, 1, 0}, 5);
+            if(InputSystem::Instance().IsKeyPressed(Key::A))
+            {
+                double sqrtSpeed = 0.707*cameraSpeed;
+                cameraPhysics->SetVelocity({0, 1, 0}, sqrtSpeed);
+                cameraPhysics->SetVelocity({1, 0, 0}, -sqrtSpeed);
+            }
+            else if(InputSystem::Instance().IsKeyPressed(Key::D))
+            {
+                double sqrtSpeed = 0.707*cameraSpeed;
+                cameraPhysics->SetVelocity({1, 0, 0}, sqrtSpeed);
+                cameraPhysics->SetVelocity({0, 1, 0}, sqrtSpeed);
+            }
+            else
+                cameraPhysics->SetVelocity({0, 1, 0}, cameraSpeed);
             cameraMoved = true;
         }
         else if(InputSystem::Instance().IsKeyPressed(Key::S))
         {
-            cameraPhysics->SetVelocity({0, 1, 0}, -5);
+            if(InputSystem::Instance().IsKeyPressed(Key::A))
+            {
+                double sqrtSpeed = 0.707*cameraSpeed;
+                cameraPhysics->SetVelocity({0, 1, 0}, -sqrtSpeed);
+                cameraPhysics->SetVelocity({1, 0, 0}, -sqrtSpeed);
+            }
+            else if(InputSystem::Instance().IsKeyPressed(Key::D))
+            {
+                double sqrtSpeed = 0.707*cameraSpeed;
+                cameraPhysics->SetVelocity({1, 0, 0}, sqrtSpeed);
+                cameraPhysics->SetVelocity({0, 1, 0}, -sqrtSpeed);
+            }
+            else
+                cameraPhysics->SetVelocity({0, 1, 0}, -cameraSpeed);
             cameraMoved = true;
         }
         else
@@ -68,6 +94,7 @@ public:
         if(cameraMoved)
             UpdateCamera();
     }
+    double cameraSpeed = 5;
 };
 
 #endif // SANDBOXGAME_H
