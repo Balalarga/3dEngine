@@ -24,6 +24,7 @@ SOURCES += \
         src/Components/physicscomponent.cpp \
         src/Objects/gameobject.cpp \
         src/Objects/game.cpp \
+        src/Objects/lightobject.cpp \
         src/Systems/FileSystem/filesystem.cpp \
         src/Systems/RenderSystem/baserenderer.cpp \
         src/Systems/RenderSystem/OpenGL/openglrenderer.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
         src/Components/meshcomponent.h \
         src/Components/physicscomponent.h \
         src/Objects/gameobject.h \
+        src/Objects/lightobject.h \
         src/Objects/transform.h \
         src/Objects/game.h \
         src/Systems/FileSystem/filesystem.h \

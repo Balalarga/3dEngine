@@ -29,12 +29,12 @@ std::string FileSystem::ReadFile(const std::string &filepath)
     fileData << file.rdbuf();
 
     file.close();
-    cout<<fileData.str()<<endl;
     return fileData.str();
 }
 
 MeshData FileSystem::ReadObj(const string &filepath)
 {
+    vector<glm::vec3> normals;
     MeshData meshData;
     ifstream file(filepath);
     if(!file)
@@ -49,11 +49,19 @@ MeshData FileSystem::ReadObj(const string &filepath)
         file >> token;
         if(token == "v")
         {
-            glm::fvec3 vertex;
-            file >> vertex.x;
-            file >> vertex.y;
-            file >> vertex.z;
-            meshData.verteces.push_back(vertex);
+            Vertex v;
+            file >> v.pos.x;
+            file >> v.pos.y;
+            file >> v.pos.z;
+            meshData.vertices.push_back(v);
+        }
+        else if(token == "vn")
+        {
+            glm::fvec3 normal;
+            file >> normal.x;
+            file >> normal.y;
+            file >> normal.z;
+            normals.push_back(normal);
         }
         else if(token == "f")
         {
@@ -63,21 +71,32 @@ MeshData FileSystem::ReadObj(const string &filepath)
             auto vertices = Split(line, ' ');
             if(vertices.size() == 4)
                 meshData.drawType = DrawType::QUADS;
-            unsigned idx;
-            for(auto v: vertices){
-                auto del = v.find('/');
-                if(del != string::npos){
-                    idx = stoi(v.substr(0, del))-1;
-                    meshData.indices.push_back(idx);
+            unsigned vertId, normId;
+            for(auto v: vertices)
+            {
+                auto numbers = Split(v, '/');
+                if(numbers.size() >= 3){
+                    vertId = stoi(numbers[0])-1;
+                    normId = stoi(numbers[2])-1;
+                    meshData.indices.push_back(vertId);
+                    meshData.vertices[normId].normal += normals[normId];
+                    meshData.vertices[normId].normal = glm::normalize(meshData.vertices[normId].normal);
                 }
             }
         }
     }
-    if(meshData.verteces.empty()){
+    if(meshData.vertices.empty()){
         cout<<"no vertices\n";
     }
 
     file.close();
+
+    for(auto& i: meshData.vertices)
+    {
+        cout<<i.pos.x<<", "<<i.pos.y<<", "<<i.pos.z<<" ";
+        cout<<i.normal.x<<", "<<i.normal.y<<", "<<i.normal.z<<endl;
+    }
+
     return meshData;
 }
 

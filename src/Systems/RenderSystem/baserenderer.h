@@ -12,11 +12,17 @@ enum class DrawType{
     QUADS
 };
 
+struct Vertex
+{
+    glm::fvec3 pos = {0, 0, 0};
+    glm::fvec3 normal = {0, 0, 0};
+};
+
 struct MeshData{
-    std::vector<glm::fvec3> verteces;
+    std::vector<Vertex> vertices;
     std::vector<unsigned> indices;
-    std::string vertexShaderPath;
-    std::string fragmentShaderPath;
+    std::string vShaderPath;
+    std::string fShaderPath;
     glm::fvec3 color = {1.f, 1.f, 1.f};
     DrawType drawType = DrawType::TRIANGLES;
 };

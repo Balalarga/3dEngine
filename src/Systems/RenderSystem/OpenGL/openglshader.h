@@ -21,6 +21,7 @@ public:
 protected:
     bool CheckProgram() const;
     bool CheckShader(unsigned shader) const;
+    bool binded = false;
 };
 
 #endif // OPENGLSHADER_H

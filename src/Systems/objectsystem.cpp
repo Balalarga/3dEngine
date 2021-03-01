@@ -11,10 +11,25 @@ ObjectSystem& ObjectSystem::Instance()
 
 void ObjectSystem::Clear()
 {
-    for(auto i: objects)
+    for(auto& i: objects)
     {
         delete i.second;
     }
+    if(mainLight)
+        delete mainLight;
+}
+
+void ObjectSystem::AddAmbientLight(glm::vec3 color)
+{
+    ambientColor = color;
+}
+
+LightObject *ObjectSystem::AddDiffuseLight(glm::vec3 pos, glm::vec3 color)
+{
+    mainLight = new LightObject(color);
+    mainLight->transform.Move(pos);
+
+    return mainLight;
 }
 
 void ObjectSystem::Remove(std::string name)
@@ -37,16 +52,21 @@ GameObject *ObjectSystem::Get(std::string name)
 
 void ObjectSystem::FrameUpdate()
 {
-    for(auto i: objects)
+    for(auto& i: objects)
         i.second->FrameUpdate();
 }
 
 void ObjectSystem::FixedUpdate(double dt)
 {
-    for(auto i: objects)
+    for(auto& i: objects)
     {
         i.second->FixedUpdate(dt);
     }
+}
+
+ObjectSystem::~ObjectSystem()
+{
+    Clear();
 }
 
 ObjectSystem::ObjectSystem()

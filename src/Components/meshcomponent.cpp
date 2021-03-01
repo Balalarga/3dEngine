@@ -2,9 +2,9 @@
 #include "Objects/gameobject.h"
 #include "Utils/utils.h"
 
-MeshComponent::MeshComponent(MeshData& data)
+MeshComponent::MeshComponent(MeshData& data):
+    data(data)
 {
-    verteces = data.verteces;
     descriptor = RenderSystem::Instance().GetRender()->CreateDescriptor(data);
 }
 

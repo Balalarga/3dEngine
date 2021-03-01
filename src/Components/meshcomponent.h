@@ -15,7 +15,7 @@ public:
     ~MeshComponent();
     void FrameUpdate() override;
 
-    vector<glm::fvec3> verteces;
+    MeshData& data;
     ObjectDescriptor descriptor;
 };
 

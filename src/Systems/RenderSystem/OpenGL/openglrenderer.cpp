@@ -1,5 +1,6 @@
 #include "openglrenderer.h"
 #include "Systems/FileSystem/filesystem.h"
+#include "Systems/objectsystem.h"
 #include "Utils/utils.h"
 #include "openglshader.h"
 
@@ -54,10 +55,11 @@ OpenGLRenderer::OpenGLRenderer(std::string title, glm::ivec2 windowSize):
     cout<<"OpenGL version supported: "<<glVersion<<endl;
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glFrontFace(GL_CW);
+    glFrontFace(GL_CCW);
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+    glShadeModel(GL_FLAT);
 
     viewMatrix = glm::lookAt(glm::fvec3(0.0f, 0.0f, 2.5f),
                              glm::fvec3(0.0f, 0.0f, 0.0f),
@@ -84,12 +86,18 @@ void OpenGLRenderer::UpdateViewMatrix(const glm::fmat4 view)
 
 void OpenGLRenderer::FrameUpdate(const ObjectDescriptor& desc, const glm::fmat4& modelMatrix) const
 {
+    glBindVertexArray(desc.vertexArrayObject);
+    desc.shader->Bind();
+
     desc.shader->SetMat4("model", modelMatrix);
     desc.shader->SetMat4("view", viewMatrix);
     desc.shader->SetVec3("color", desc.color);
-
-    desc.shader->Bind();
-    glBindVertexArray(desc.vertexArrayObject);
+    desc.shader->SetVec3("ambientColor", ObjectSystem::Instance().ambientColor);
+    if(ObjectSystem::Instance().mainLight)
+    {
+        desc.shader->SetVec3("diffuseColor", ObjectSystem::Instance().mainLight->color);
+        desc.shader->SetVec3("diffusePos", ObjectSystem::Instance().mainLight->transform.GetPos());
+    }
 
     GLenum mode = desc.drawType == DrawType::TRIANGLES ? GL_TRIANGLES : GL_QUADS;
 
@@ -114,8 +122,15 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,
-                 data.verteces.size()*sizeof(data.verteces[0]),
-            &data.verteces.front(), GL_STATIC_DRAW);
+                 data.vertices.size()*sizeof(Vertex),
+            &data.vertices.front(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+                          (void*)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(1);
 
     GLuint ebo = 0;
     glGenBuffers(1, &ebo);
@@ -124,48 +139,58 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
                  data.indices.size()*sizeof(data.indices[0]),
             &data.indices.front(), GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     std::string vertexShaderSource;
     std::string fragmentShaderSource;
-    if(!data.vertexShaderPath.empty())
-        vertexShaderSource = FileSystem::ReadFile(data.vertexShaderPath).c_str();
+    if(!data.vShaderPath.empty())
+        vertexShaderSource = FileSystem::ReadFile(data.vShaderPath).c_str();
     else
     {
         vertexShaderSource = R"(
-                             #version 410
+#version 410
 
-                             layout (location = 0) in vec3 pos;
-                             layout (location = 1) in vec3 normal;
+layout (location = 0) in vec3 pos;
+layout (location = 1) in vec3 normal;
 
-                             uniform mat4 view;
-                             uniform mat4 model;
-                             uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+uniform mat4 projection;
 
-                             void main() {
-                                gl_Position = projection * view * model * vec4(pos, 1.0f);
-                             }
+out vec3 oNormal;
+out vec3 oFragPos;
+
+void main() {
+   gl_Position = projection * view * model * vec4(pos, 1.0f);
+   oFragPos = vec3(model * vec4(pos, 1.0));
+   oNormal = normal;
+}
+
+
                              )";
     }
 
-    if(!data.fragmentShaderPath.empty())
-        fragmentShaderSource = FileSystem::ReadFile(data.fragmentShaderPath).c_str();
+    if(!data.fShaderPath.empty())
+        fragmentShaderSource = FileSystem::ReadFile(data.fShaderPath).c_str();
     else
     {
         fragmentShaderSource = R"(
-                               #version 410
+#version 410
 
-                               in vec3 fragPos;
+in vec3 fragPos;
+in vec3 normal;
 
-                               uniform vec3 color;
+uniform vec3 color;
+uniform vec3 lightColor;
 
-                               out vec4 frag_color;
+out vec4 frag_color;
 
-                               void main() {
-                                    frag_color = vec4(color, 1.0);
-                               }
+void main() {
+    float ambientStrength = 0.1;
+    vec3 ambient = ambientStrength * lightColor;
+    vec3 result = ambient * color;
+    frag_color = vec4(result, 1.0);
+}
+
                                )";
     }
 
@@ -179,7 +204,7 @@ ObjectDescriptor OpenGLRenderer::CreateDescriptor(MeshData& data) const
 
     glm::fmat4 projection = glm::perspective(
                 80.f,
-                16/9.f,
+                windowSize.x/windowSize.y,
                 0.1f, 100.0f);
 
 

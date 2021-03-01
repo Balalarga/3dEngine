@@ -2,6 +2,7 @@
 #define OBJECTSYSTEM_H
 
 #include "Objects/gameobject.h"
+#include "Objects/lightobject.h"
 #include <string>
 #include <unordered_map>
 
@@ -25,18 +26,25 @@ public:
             delete object;
         return nullptr;
     }
-
-    void Remove(std::string name);
-    GameObject* Get(std::string name);
     template<class T>
     T* GetClass(std::string name)
     {
         GameObject* obj = Get(name);
         return dynamic_cast<T*>(obj);
     }
+
+    void AddAmbientLight(glm::vec3 color);
+    LightObject* AddDiffuseLight(glm::vec3 pos, glm::vec3 color);
+
+    void Remove(std::string name);
+    GameObject* Get(std::string name);
+
     void FrameUpdate();
     void FixedUpdate(double dt);
+    ~ObjectSystem();
 
+    LightObject* mainLight;
+    glm::vec3 ambientColor = {255, 255, 255};
 
 private:
     static ObjectSystem* selfInstance;

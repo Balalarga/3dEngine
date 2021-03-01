@@ -44,60 +44,75 @@ OpenglShader::OpenglShader(std::map<ShaderType, std::string> shaders)
 
 void OpenglShader::Bind()
 {
+    binded = true;
     glUseProgram(id);
 }
 
 void OpenglShader::Unbind()
 {
+    binded = false;
     glUseProgram(0);
 }
 
 void OpenglShader::SetMat4(const std::string &name, glm::mat4 val)
 {
-    Bind();
+    if(!binded)
+        Bind();
     int loc = glGetUniformLocation(id, name.c_str());
     glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(val));
-    Unbind();
+    if(!binded)
+        Unbind();
 }
 
 void OpenglShader::SetMat3(const std::string &name, glm::mat3 val)
 {
-    Bind();
+    if(!binded)
+        Bind();
     int loc = glGetUniformLocation(id, name.c_str());
     glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(val));
-    Unbind();
+    if(!binded)
+        Unbind();
 }
 
 void OpenglShader::SetVec4(const std::string &name, glm::vec4 val)
 {
-    Bind();
+    if(!binded)
+        Bind();
     int loc = glGetUniformLocation(id, name.c_str());
     glUniform4fv(loc, 1, glm::value_ptr(val));
-    Unbind();
+    if(!binded)
+        Unbind();
 }
 
 void OpenglShader::SetVec3(const std::string &name, glm::vec3 val)
 {
-    Bind();
+    if(!binded)
+        Bind();
     int loc = glGetUniformLocation(id, name.c_str());
     glUniform3fv(loc, 1, glm::value_ptr(val));
-    Unbind();
+    if(!binded)
+        Unbind();
 }
 
 void OpenglShader::SetVec2(const std::string &name, glm::vec2 val)
 {
-    Bind();
+    if(!binded)
+        Bind();
     int loc = glGetUniformLocation(id, name.c_str());
     glUniform2fv(loc, 1, glm::value_ptr(val));
-    Unbind();
+    if(!binded)
+        Unbind();
 }
 
 void OpenglShader::SetValue(const std::string &name, float val)
 {
-    Bind();
+    if(!binded)
+        Bind();
     int loc = glGetUniformLocation(id, name.c_str());
     glUniform1f(loc, val);
-    Unbind();
+
+    if(!binded)
+        Unbind();
 }
 
 bool OpenglShader::CheckShader(unsigned shader) const
@@ -111,6 +126,7 @@ bool OpenglShader::CheckShader(unsigned shader) const
 
         std::vector<GLchar> errorLog(maxLength);
         glGetShaderInfoLog(shader, maxLength, &maxLength, &errorLog[0]);
+        cout<<"Shader error\n";
         for(auto i: errorLog)
         {
             cout<<i;
@@ -135,6 +151,7 @@ bool OpenglShader::CheckProgram() const
 
         std::vector<GLchar> errorLog(maxLength);
         glGetProgramInfoLog(id, maxLength, &maxLength, &errorLog[0]);
+        cout<<"Program error\n";
         for(auto i: errorLog)
         {
             cout<<i;
